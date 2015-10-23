@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA1BCD611BD9D53E00AB6D1C /* Changesets.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC5BB661B7FE00500840D1E /* Changesets.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AA1BCD621BD9D54500AB6D1C /* Changeset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6B1B7FE01200840D1E /* Changeset.swift */; };
+		AA1BCD631BD9D54500AB6D1C /* Matchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6C1B7FE01200840D1E /* Matchable.swift */; };
+		AA1BCD641BD9D54B00AB6D1C /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6E1B7FE01200840D1E /* Diff.swift */; };
+		AA1BCD651BD9D54B00AB6D1C /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6F1B7FE01200840D1E /* DiffEngine.swift */; };
+		AA1BCD661BD9D54B00AB6D1C /* DiffResultSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB701B7FE01200840D1E /* DiffResultSpan.swift */; };
+		AA1BCD671BD9D54B00AB6D1C /* DiffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB711B7FE01200840D1E /* DiffStatus.swift */; };
+		AA1BCD681BD9D55000AB6D1C /* Changeset+IndexPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB731B7FE01200840D1E /* Changeset+IndexPaths.swift */; };
+		AA1BCD691BD9D55000AB6D1C /* UICollectionView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB741B7FE01200840D1E /* UICollectionView+Changesets.swift */; };
+		AA1BCD6A1BD9D55000AB6D1C /* UITableView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB751B7FE01200840D1E /* UITableView+Changesets.swift */; };
 		AAC5BB571B7FDF2200840D1E /* Changesets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */; };
 		AAC5BB681B7FE00500840D1E /* Changesets.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC5BB661B7FE00500840D1E /* Changesets.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AAC5BB761B7FE01200840D1E /* Changeset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6B1B7FE01200840D1E /* Changeset.swift */; };
@@ -35,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AA1BCD591BD9D47B00AB6D1C /* Changesets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Changesets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Changesets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC5BB561B7FDF2200840D1E /* ChangesetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChangesetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC5BB5D1B7FDF2200840D1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +67,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AA1BCD551BD9D47B00AB6D1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAC5BB481B7FDF2200840D1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -88,6 +106,7 @@
 			children = (
 				AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */,
 				AAC5BB561B7FDF2200840D1E /* ChangesetsTests.xctest */,
+				AA1BCD591BD9D47B00AB6D1C /* Changesets.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,6 +184,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		AA1BCD561BD9D47B00AB6D1C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA1BCD611BD9D53E00AB6D1C /* Changesets.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAC5BB491B7FDF2200840D1E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -176,9 +203,27 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		AAC5BB4B1B7FDF2200840D1E /* Changesets */ = {
+		AA1BCD581BD9D47B00AB6D1C /* Changesets-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AAC5BB601B7FDF2200840D1E /* Build configuration list for PBXNativeTarget "Changesets" */;
+			buildConfigurationList = AA1BCD5E1BD9D47B00AB6D1C /* Build configuration list for PBXNativeTarget "Changesets-tvOS" */;
+			buildPhases = (
+				AA1BCD541BD9D47B00AB6D1C /* Sources */,
+				AA1BCD551BD9D47B00AB6D1C /* Frameworks */,
+				AA1BCD561BD9D47B00AB6D1C /* Headers */,
+				AA1BCD571BD9D47B00AB6D1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Changesets-tvOS";
+			productName = "Changesets-tvOS";
+			productReference = AA1BCD591BD9D47B00AB6D1C /* Changesets.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		AAC5BB4B1B7FDF2200840D1E /* Changesets-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAC5BB601B7FDF2200840D1E /* Build configuration list for PBXNativeTarget "Changesets-iOS" */;
 			buildPhases = (
 				AAC5BB471B7FDF2200840D1E /* Sources */,
 				AAC5BB481B7FDF2200840D1E /* Frameworks */,
@@ -189,7 +234,7 @@
 			);
 			dependencies = (
 			);
-			name = Changesets;
+			name = "Changesets-iOS";
 			productName = Changesets;
 			productReference = AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */;
 			productType = "com.apple.product-type.framework";
@@ -221,6 +266,9 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Steve Brambilla";
 				TargetAttributes = {
+					AA1BCD581BD9D47B00AB6D1C = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					AAC5BB4B1B7FDF2200840D1E = {
 						CreatedOnToolsVersion = 7.0;
 					};
@@ -241,13 +289,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AAC5BB4B1B7FDF2200840D1E /* Changesets */,
+				AAC5BB4B1B7FDF2200840D1E /* Changesets-iOS */,
+				AA1BCD581BD9D47B00AB6D1C /* Changesets-tvOS */,
 				AAC5BB551B7FDF2200840D1E /* ChangesetsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AA1BCD571BD9D47B00AB6D1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAC5BB4A1B7FDF2200840D1E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,6 +321,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AA1BCD541BD9D47B00AB6D1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA1BCD671BD9D54B00AB6D1C /* DiffStatus.swift in Sources */,
+				AA1BCD661BD9D54B00AB6D1C /* DiffResultSpan.swift in Sources */,
+				AA1BCD641BD9D54B00AB6D1C /* Diff.swift in Sources */,
+				AA1BCD691BD9D55000AB6D1C /* UICollectionView+Changesets.swift in Sources */,
+				AA1BCD6A1BD9D55000AB6D1C /* UITableView+Changesets.swift in Sources */,
+				AA1BCD621BD9D54500AB6D1C /* Changeset.swift in Sources */,
+				AA1BCD651BD9D54B00AB6D1C /* DiffEngine.swift in Sources */,
+				AA1BCD681BD9D55000AB6D1C /* Changeset+IndexPaths.swift in Sources */,
+				AA1BCD631BD9D54500AB6D1C /* Matchable.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAC5BB471B7FDF2200840D1E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -297,12 +369,50 @@
 /* Begin PBXTargetDependency section */
 		AAC5BB591B7FDF2200840D1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AAC5BB4B1B7FDF2200840D1E /* Changesets */;
+			target = AAC5BB4B1B7FDF2200840D1E /* Changesets-iOS */;
 			targetProxy = AAC5BB581B7FDF2200840D1E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AA1BCD5F1BD9D47B00AB6D1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/Changesets/Resources/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stevebrambilla.Changesets;
+				PRODUCT_NAME = Changesets;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		AA1BCD601BD9D47B00AB6D1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/Changesets/Resources/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stevebrambilla.Changesets;
+				PRODUCT_NAME = Changesets;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 		AAC5BB5E1B7FDF2200840D1E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -403,7 +513,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stevebrambilla.Changesets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Changesets;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -419,7 +529,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stevebrambilla.Changesets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Changesets;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -447,6 +557,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AA1BCD5E1BD9D47B00AB6D1C /* Build configuration list for PBXNativeTarget "Changesets-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1BCD5F1BD9D47B00AB6D1C /* Debug */,
+				AA1BCD601BD9D47B00AB6D1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		AAC5BB461B7FDF2200840D1E /* Build configuration list for PBXProject "Changesets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -456,13 +574,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AAC5BB601B7FDF2200840D1E /* Build configuration list for PBXNativeTarget "Changesets" */ = {
+		AAC5BB601B7FDF2200840D1E /* Build configuration list for PBXNativeTarget "Changesets-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC5BB611B7FDF2200840D1E /* Debug */,
 				AAC5BB621B7FDF2200840D1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AAC5BB631B7FDF2200840D1E /* Build configuration list for PBXNativeTarget "ChangesetsTests" */ = {
 			isa = XCConfigurationList;
@@ -471,6 +590,7 @@
 				AAC5BB651B7FDF2200840D1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
