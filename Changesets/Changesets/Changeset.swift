@@ -40,6 +40,11 @@ extension Changeset {
 		let updCount = updated.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
 		return insCount + delCount + updCount
 	}
+
+	/// Returns true if there are no changed indexes in the Changeset.
+	public var isEmpty: Bool {
+		return changedIndexCount == 0
+	}
 }
 
 // ----------------------------------------------------------------------------
