@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum DiffResultSpan {
+internal enum DiffResultSpan {
 	case NoChange(sourceIndex: Int, destIndex: Int, length: Int)
 	case Replace(sourceIndex: Int, destIndex: Int, length: Int)
 	case Delete(sourceIndex: Int, length: Int)
@@ -84,7 +84,7 @@ extension DiffResultSpan {
 }
 
 extension DiffResultSpan: CustomStringConvertible {
-	public var description: String {
+	internal var description: String {
 		switch self {
 		case let .NoChange(sourceIndex, destIndex, length): return "{ NoChange: dest = \(destIndex), source: \(sourceIndex), length: \(length) }"
 		case let .Replace(sourceIndex, destIndex, length): return "{ Replace: dest = \(destIndex), source: \(sourceIndex), length: \(length) }"

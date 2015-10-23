@@ -12,7 +12,7 @@ import Foundation
 /// as the data set size increases.
 ///
 /// FastImperfect is the default precision unless overridden.
-public enum DiffPrecision {
+internal enum DiffPrecision {
 	case FastImperfect
 	case Medium
 	case SlowPerfect
@@ -23,7 +23,7 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 	/// for matching.
 	///
 	/// Returns a `DiffResultsSpan` that represents the changes indexes.
-	public func diff(dest: Self, precision: DiffPrecision = .FastImperfect) -> [DiffResultSpan] {
+	internal func diff(dest: Self, precision: DiffPrecision = .FastImperfect) -> [DiffResultSpan] {
 		let engine = DiffEngine(sourceList: self, destList: dest, precision: precision) { $0 == $1 }
 		return engine.diffReport()
 	}
@@ -34,7 +34,7 @@ extension CollectionType where Index == Int {
 	/// for matching.
 	///
 	/// Returns a `DiffResultsSpan` that represents the changes indexes.
-	public func diff(dest: Self, precision: DiffPrecision = .FastImperfect, isMatch: (Generator.Element, Generator.Element) -> Bool) -> [DiffResultSpan] {
+	internal func diff(dest: Self, precision: DiffPrecision = .FastImperfect, isMatch: (Generator.Element, Generator.Element) -> Bool) -> [DiffResultSpan] {
 		let engine = DiffEngine(sourceList: self, destList: dest, precision: precision, isMatch: isMatch)
 		return engine.diffReport()
 	}
