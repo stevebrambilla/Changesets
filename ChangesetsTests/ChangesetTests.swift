@@ -143,4 +143,84 @@ class ChangesetTests: XCTestCase {
 		// There were 8 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexCount, 8)
 	}
+
+	func testReplacementChangeset() {
+		let source = [
+			EquatableValue(name: "A", rev: 0), // 0
+			EquatableValue(name: "B", rev: 0), // 1
+			EquatableValue(name: "C", rev: 0), // 2
+		]
+		let dest = [
+			EquatableValue(name: "D", rev: 0), // 0
+			EquatableValue(name: "E", rev: 0), // 1
+			EquatableValue(name: "F", rev: 0), // 2
+			EquatableValue(name: "G", rev: 0), // 3
+		]
+
+		let changeset = source.changesetTo(dest)
+
+		XCTAssertEqual(changeset.updated.count, 0)
+		XCTAssertEqual(changeset.deleted.count, 1)
+		XCTAssertEqual(changeset.inserted.count, 1)
+
+		// Delete All
+		let deletedRange = changeset.deleted.first!
+		XCTAssertEqual(deletedRange.startIndex, 0)
+		XCTAssertEqual(deletedRange.endIndex, 3)
+
+		// Insert All
+		let insertedRange = changeset.inserted.first!
+		XCTAssertEqual(insertedRange.startIndex, 0)
+		XCTAssertEqual(insertedRange.endIndex, 4)
+
+		// This was a full replacement
+		XCTAssertTrue(changeset.wasReplaced)
+	}
+
+	func testEmptyBeforeChangeset() {
+		let source = [EquatableValue]()
+		let dest = [
+			EquatableValue(name: "D", rev: 0), // 0
+			EquatableValue(name: "E", rev: 0), // 1
+			EquatableValue(name: "F", rev: 0), // 2
+			EquatableValue(name: "G", rev: 0), // 3
+		]
+
+		let changeset = source.changesetTo(dest)
+
+		XCTAssertEqual(changeset.updated.count, 0)
+		XCTAssertEqual(changeset.deleted.count, 0)
+		XCTAssertEqual(changeset.inserted.count, 1)
+
+		// Insert All
+		let insertedRange = changeset.inserted.first!
+		XCTAssertEqual(insertedRange.startIndex, 0)
+		XCTAssertEqual(insertedRange.endIndex, 4)
+
+		// This was a full replacement
+		XCTAssertTrue(changeset.wasReplaced)
+	}
+
+	func testEmptyAfterChangeset() {
+		let source = [
+			EquatableValue(name: "A", rev: 0), // 0
+			EquatableValue(name: "B", rev: 0), // 1
+			EquatableValue(name: "C", rev: 0), // 2
+		]
+		let dest = [EquatableValue]()
+
+		let changeset = source.changesetTo(dest)
+
+		XCTAssertEqual(changeset.updated.count, 0)
+		XCTAssertEqual(changeset.deleted.count, 1)
+		XCTAssertEqual(changeset.inserted.count, 0)
+
+		// Delete All
+		let deletedRange = changeset.deleted.first!
+		XCTAssertEqual(deletedRange.startIndex, 0)
+		XCTAssertEqual(deletedRange.endIndex, 3)
+
+		// This was a full replacement
+		XCTAssertTrue(changeset.wasReplaced)
+	}
 }
