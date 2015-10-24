@@ -51,22 +51,22 @@ extension Changeset {
 // MARK: - CollectionType Extensions
 
 extension CollectionType where Generator.Element: Matchable, Index == Int {
-	/// Calculate the Changeset required to transition from `from` to `self`.
+	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides high-fidelity matching using Matchable's `matchWith()` method.
-	public func changeset(from before: Self) -> Changeset {
-		return calculateChangeset(from: before, to: self) { left, right in
+	public func changesetTo(after: Self) -> Changeset {
+		return calculateChangeset(from: self, to: after) { left, right in
 			left.matchWith(right)
 		}
 	}
 }
 
 extension CollectionType where Generator.Element: Equatable, Index == Int {
-	/// Calculate the Changeset required to transition from `from` to `self`.
+	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides low-fidelity matching by matching using value equality.
-	public func changeset(from before: Self) -> Changeset {
-		return calculateChangeset(from: before, to: self) { left, right in
+	public func changesetTo(after: Self) -> Changeset {
+		return calculateChangeset(from: self, to: after) { left, right in
 			matchWithoutIdentity(left, right)
 		}
 	}

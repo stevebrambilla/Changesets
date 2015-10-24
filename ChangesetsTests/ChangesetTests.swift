@@ -31,7 +31,7 @@ class ChangesetTests: XCTestCase {
 			MatchableValue(name: "K", rev: 0), // 7
 		]
 
-		let changeset = dest.changeset(from: source)
+		let changeset = source.changesetTo(dest)
 
 		var updatedGenerator = changeset.updated.generate()
 		var deletedGenerator = changeset.deleted.generate()
@@ -96,7 +96,7 @@ class ChangesetTests: XCTestCase {
 			EquatableValue(name: "K", rev: 0), // 7
 		]
 
-		let changeset = dest.changeset(from: source)
+		let changeset = source.changesetTo(dest)
 
 		// No updated ranges when relying on Equatable for matching
 		XCTAssertEqual(changeset.updated.count, 0)
