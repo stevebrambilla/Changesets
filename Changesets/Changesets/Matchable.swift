@@ -44,6 +44,16 @@ public func == <T: Matchable>(lhs: T, rhs: T) -> Bool {
 	return lhs.matchWith(rhs) == .EqualIdentityEqualValue
 }
 
+/// If `result` is not `EqualIdentityEqualValue`, return it, otherwise evaluate
+/// `rhs` as a value equation and return `EqualIdentityEqualValue` or
+/// `EqualIdentityInequalValue` depending on the result.
+public func && (result: MatchResult, @autoclosure rhs: () -> Bool) -> MatchResult {
+	if result == .EqualIdentityEqualValue {
+		return rhs() ? .EqualIdentityEqualValue : .EqualIdentityInequalValue
+	}
+	return result
+}
+
 /// Low-fidelity matching for `Equatable`s.
 ///
 /// Comparing values this way does not consider identity when matching.
