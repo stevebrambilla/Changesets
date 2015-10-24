@@ -73,7 +73,7 @@ class ChangesetTests: XCTestCase {
 		XCTAssert(insertedGenerator.next() == nil)
 
 		// There were 6 indexes changes in total
-		XCTAssertEqual(changeset.changedIndexCount, 6)
+		XCTAssertEqual(changeset.changedIndexesCount, 6)
 		XCTAssertFalse(changeset.wasReplaced)
 	}
 
@@ -142,7 +142,7 @@ class ChangesetTests: XCTestCase {
 		XCTAssert(insertedGenerator.next() == nil)
 
 		// There were 8 indexes changes in total
-		XCTAssertEqual(changeset.changedIndexCount, 8)
+		XCTAssertEqual(changeset.changedIndexesCount, 8)
 		XCTAssertFalse(changeset.wasReplaced)
 	}
 
@@ -171,7 +171,7 @@ class ChangesetTests: XCTestCase {
 		XCTAssertEqual(bcRange.endIndex, 3)
 
 		// There were 2 indexes changes in total
-		XCTAssertEqual(changeset.changedIndexCount, 2)
+		XCTAssertEqual(changeset.changedIndexesCount, 2)
 		XCTAssertFalse(changeset.wasReplaced)
 	}
 

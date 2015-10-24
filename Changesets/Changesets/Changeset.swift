@@ -19,14 +19,16 @@ public struct Changeset: Equatable {
 	public let deleted: [Range<Int>]
 	public let inserted: [Range<Int>]
 
-	// Indicates that the diffed collections were fully replaced.
-	public let wasReplaced: Bool
+	public let countBefore: Int
+	public let countAfter: Int
 }
 
 public func == (lhs: Changeset, rhs: Changeset) -> Bool {
 	return lhs.inserted == rhs.inserted &&
 		lhs.deleted == rhs.deleted &&
-		lhs.updated == rhs.updated
+		lhs.updated == rhs.updated &&
+		lhs.countBefore == rhs.countBefore &&
+		lhs.countAfter == rhs.countAfter
 }
 
 extension Changeset: CustomStringConvertible {
@@ -37,7 +39,7 @@ extension Changeset: CustomStringConvertible {
 
 extension Changeset {
 	/// Returns the total number of changed indexes in the Changeset.
-	public var changedIndexCount: Int {
+	public var changedIndexesCount: Int {
 		let insCount = inserted.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
 		let delCount = deleted.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
 		let updCount = updated.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
@@ -46,7 +48,25 @@ extension Changeset {
 
 	/// Returns true if there are no changed indexes in the Changeset.
 	public var isEmpty: Bool {
-		return changedIndexCount == 0
+		return changedIndexesCount == 0
+	}
+
+	// Returns true if the before and after collections were fully replaced.
+	public var wasReplaced: Bool {
+		// If everything in the `before` collection is deleted or everything in
+		// the after collection is inserted, then it's considered a full 
+		// replacement.
+		let fullDeletedRange = Range(start: 0, end: countBefore)
+		if let deletedRange = deleted.first where deletedRange == fullDeletedRange {
+			return true
+		}
+
+		let fullInsertedRange = Range(start: 0, end: countAfter)
+		if let insertedRange = inserted.first where insertedRange == fullInsertedRange {
+			return true
+		}
+
+		return false
 	}
 }
 
@@ -156,8 +176,13 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 	let consolidatedUpdates = consolidate(updated)
 	let consolidatedDeletes = consolidate(deleted)
 	let consolidatedInserts = consolidate(inserted)
-	let wasReplaced = collectionWasReplaced(before, after: after, deleted: consolidatedDeletes.first, inserted: consolidatedInserts.first)
-	return Changeset(updated: consolidatedUpdates, deleted: consolidatedDeletes, inserted: consolidatedInserts, wasReplaced: wasReplaced)
+	return Changeset(
+		updated: consolidatedUpdates,
+		deleted: consolidatedDeletes,
+		inserted: consolidatedInserts,
+		countBefore: before.count,
+		countAfter: after.count
+	)
 }
 
 /// Flattens consecutive ranges together and returns a consolidated array of
@@ -176,18 +201,3 @@ private func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
 	return consolidated
 }
 
-private func collectionWasReplaced<C: CollectionType where C.Index == Int>(before: C, after: C, deleted: Range<Int>?, inserted: Range<Int>?) -> Bool {
-	// If everything in the `before` collection is deleted or everything in the
-	// after collection is inserted, then it's considered a full replacement.
-	let fullDeletedRange = Range(start: before.startIndex, end: before.endIndex)
-	if let deleted = deleted where deleted == fullDeletedRange {
-		return true
-	}
-
-	let fullInsertedRange = Range(start: after.startIndex, end: after.endIndex)
-	if let inserted = inserted where inserted == fullInsertedRange {
-		return true
-	}
-	
-	return false
-}
