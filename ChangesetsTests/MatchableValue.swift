@@ -30,12 +30,12 @@ extension MatchableValue: Matchable {
 	func matchWith(other: MatchableValue) -> MatchResult {
 		if name == other.name {
 			if rev == other.rev {
-				return .EqualIdentityEqualValue
+				return .SameIdentityEqualValue
 			} else {
-				return .EqualIdentityInequalValue
+				return .SameIdentityInequalValue
 			}
 		} else {
-			return .InequalIdentity
+			return .DifferentIdentity
 		}
 	}
 }

@@ -90,7 +90,7 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 	/// Provides low-fidelity matching by matching using value equality.
 	public func changesetTo(after: Self) -> Changeset {
 		return calculateChangeset(from: self, to: after) { left, right in
-			matchWithoutIdentity(left, right)
+			MatchResult.noIdentityCompare(left, right)
 		}
 	}
 }
@@ -101,7 +101,7 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 private func calculateChangeset<T, C: CollectionType where T == C.Generator.Element, C.Index == Int>(from before: C, to after: C, match: (T, T) -> MatchResult) -> Changeset {
 	// Calculate the diff between the two collections by comparing identity.
 	let report = before.diff(after) { left, right in
-		match(left, right) != .InequalIdentity
+		match(left, right) != .DifferentIdentity
 	}
 
 	// Bucket the diff result spans into inserted, deleted, and updated ranges.
@@ -124,7 +124,7 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 				let destVal = after[destIdx]
 
 				switch match(srcVal, destVal) {
-				case .EqualIdentityEqualValue:
+				case .SameIdentityEqualValue:
 					// Values are equal, end the current 'updated` range if needed.
 					if let start = rangeStart {
 						let rangeEnd = srcIdx
@@ -133,13 +133,13 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 						rangeStart = nil
 					}
 
-				case .EqualIdentityInequalValue:
+				case .SameIdentityInequalValue:
 					// Values are not equal, start a new 'updated' range if needed.
 					if rangeStart == nil {
 						rangeStart = srcIdx
 					}
 
-				case .InequalIdentity:
+				case .DifferentIdentity:
 					assertionFailure(".InequalIdentity should have been resolved in the diff.")
 				}
 			}
