@@ -16,22 +16,24 @@ import UIKit
 ///
 /// A custom row animation can be specified for each change kind.
 public struct TableViewChangesetPolicy {
-	private let insertAnimation: UITableViewRowAnimation
-	private let deleteAnimation: UITableViewRowAnimation
-	private let updateAnimation: UITableViewRowAnimation
+	public let insertAnimation: UITableViewRowAnimation
+	public let deleteAnimation: UITableViewRowAnimation
+	public let updateAnimation: UITableViewRowAnimation
+	public let reloadForReplacements: Bool
 
 	/// Initializes a new policy with customizable table view row animations for
 	/// 'insert', 'delete', and 'update' changes.
-	public init(insertAnimation: UITableViewRowAnimation, deleteAnimation: UITableViewRowAnimation, updateAnimation: UITableViewRowAnimation) {
+	public init(insertAnimation: UITableViewRowAnimation, deleteAnimation: UITableViewRowAnimation, updateAnimation: UITableViewRowAnimation, reloadForReplacements: Bool) {
 		self.insertAnimation = insertAnimation
 		self.deleteAnimation = deleteAnimation
 		self.updateAnimation = updateAnimation
+		self.reloadForReplacements = reloadForReplacements
 	}
 
 	/// The default Changeset Policy is to use the 'Automatic' row animation for
 	/// all changes.
 	public static var defaultPolicy: TableViewChangesetPolicy {
-		return TableViewChangesetPolicy(insertAnimation: .Automatic, deleteAnimation: .Automatic, updateAnimation: .Automatic)
+		return TableViewChangesetPolicy(insertAnimation: .Automatic, deleteAnimation: .Automatic, updateAnimation: .Automatic, reloadForReplacements: false)
 	}
 }
 
@@ -59,7 +61,15 @@ extension UITableView {
 	///
 	/// The changes are processed within `beginUpdates` and `endUpdates` so
 	/// they are animated together.
+	///
+	/// When the entire collection is replaced, it can optionally reload the
+	/// data rather than animating inserts and deletes depending on the policy.
 	public func applyChangeset(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
+		if changeset.wasReplaced && policy.reloadForReplacements {
+			reloadData()
+			return
+		}
+
 		beginUpdates()
 
 		policy.applyUpdates(self, indexPaths: changeset.updatedIndexPaths)

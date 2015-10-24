@@ -74,6 +74,7 @@ class ChangesetTests: XCTestCase {
 
 		// There were 6 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexCount, 6)
+		XCTAssertFalse(changeset.wasReplaced)
 	}
 
 	func testEquatableChangeset() {
@@ -142,6 +143,36 @@ class ChangesetTests: XCTestCase {
 
 		// There were 8 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexCount, 8)
+		XCTAssertFalse(changeset.wasReplaced)
+	}
+
+	func testUpdateOnlyChangeset() {
+		let source = [
+			MatchableValue(name: "A", rev: 0), // 0
+			MatchableValue(name: "B", rev: 0), // 1
+			MatchableValue(name: "C", rev: 0), // 2
+		]
+		let dest = [
+			MatchableValue(name: "A", rev: 0), // 0
+			MatchableValue(name: "B", rev: 1), // 1
+			MatchableValue(name: "C", rev: 1), // 2
+		]
+
+		let changeset = source.changesetTo(dest)
+
+		XCTAssertEqual(changeset.updated.count, 1)
+		XCTAssertEqual(changeset.deleted.count, 0)
+		XCTAssertEqual(changeset.inserted.count, 0)
+
+		// Update B & C
+		let bcRange: Range<Int>! = changeset.updated.first
+		XCTAssert(bcRange != nil)
+		XCTAssertEqual(bcRange.startIndex, 1)
+		XCTAssertEqual(bcRange.endIndex, 3)
+
+		// There were 2 indexes changes in total
+		XCTAssertEqual(changeset.changedIndexCount, 2)
+		XCTAssertFalse(changeset.wasReplaced)
 	}
 
 	func testReplacementChangeset() {

@@ -17,7 +17,16 @@ extension UICollectionView {
 	///
 	/// The changes are performed as a batch update so they are animated 
 	/// together.
-	public func applyChangeset(changeset: Changeset, completion: (Bool -> Void)? = nil) {
+	///
+	/// When the entire collection is replaced, it can optionally reload the
+	/// data rather than animating deletes and inserts depending on the value of
+	/// `reloadForReplacements`.
+	public func applyChangeset(changeset: Changeset, reloadForReplacements: Bool = true, completion: (Bool -> Void)? = nil) {
+		if changeset.wasReplaced && reloadForReplacements {
+			reloadData()
+			return
+		}
+
 		performBatchUpdates({
 			self.reloadItemsAtIndexPaths(changeset.updatedIndexPaths)
 			self.deleteItemsAtIndexPaths(changeset.deletedIndexPaths)

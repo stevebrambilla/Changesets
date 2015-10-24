@@ -156,7 +156,7 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 	let consolidatedUpdates = consolidate(updated)
 	let consolidatedDeletes = consolidate(deleted)
 	let consolidatedInserts = consolidate(inserted)
-	let wasReplaced = collectionWasReplaced(before, after: after, deleted: consolidatedDeletes, inserted: consolidatedInserts)
+	let wasReplaced = collectionWasReplaced(before, after: after, deleted: consolidatedDeletes.first, inserted: consolidatedInserts.first)
 	return Changeset(updated: consolidatedUpdates, deleted: consolidatedDeletes, inserted: consolidatedInserts, wasReplaced: wasReplaced)
 }
 
@@ -176,27 +176,18 @@ private func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
 	return consolidated
 }
 
-private func collectionWasReplaced<C: CollectionType where C.Index == Int>(before: C, after: C, deleted: [Range<Int>], inserted: [Range<Int>]) -> Bool {
-	// If there are more than one non-contiguous deleted or inserted ranges, 
-	// then the collection was not replaced.
-	guard deleted.count <= 1 else { return false }
-	guard inserted.count <= 1 else { return false }
-
-	// If everything wasn't deleted from the `before` collection then the
-	// collection was not replaced.
-	let allDeletedRange = Range(start: before.startIndex, end: before.endIndex)
-	if let actualDeletedRange = deleted.first where actualDeletedRange != allDeletedRange {
-		return false
+private func collectionWasReplaced<C: CollectionType where C.Index == Int>(before: C, after: C, deleted: Range<Int>?, inserted: Range<Int>?) -> Bool {
+	// If everything in the `before` collection is deleted or everything in the
+	// after collection is inserted, then it's considered a full replacement.
+	let fullDeletedRange = Range(start: before.startIndex, end: before.endIndex)
+	if let deleted = deleted where deleted == fullDeletedRange {
+		return true
 	}
 
-	// If everything wasn't inserted into the `after` collection then the
-	// collection was not replaced.
-	let allInsertedRange = Range(start: after.startIndex, end: after.endIndex)
-	if let actualInsertedRange = inserted.first where actualInsertedRange != allInsertedRange {
-		return false
+	let fullInsertedRange = Range(start: after.startIndex, end: after.endIndex)
+	if let inserted = inserted where inserted == fullInsertedRange {
+		return true
 	}
-
-	// Otherwise, everything was deleted from `before` and inserted into 
-	// `after`, so the collection was fully replaced.
-	return true
+	
+	return false
 }
