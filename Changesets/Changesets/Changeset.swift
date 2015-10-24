@@ -8,6 +8,9 @@
 
 import Foundation
 
+// ----------------------------------------------------------------------------
+// MARK: - Changeset
+
 /// A Changeset represents the changes required to transition from one
 /// collection to another. Typically from an older snapshot of a collection, to
 /// an updated snapshot of a collection.
@@ -79,7 +82,7 @@ extension CollectionType where Generator.Element: Matchable, Index == Int {
 	/// Provides high-fidelity matching using Matchable's `matchWith()` method.
 	public func changesetTo(after: Self) -> Changeset {
 		return calculateChangeset(from: self, to: after) { left, right in
-			left.matchWith(right)
+			left.match(right)
 		}
 	}
 }

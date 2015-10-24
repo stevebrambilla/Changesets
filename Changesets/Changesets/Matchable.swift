@@ -19,13 +19,13 @@ import Foundation
 /// inequal values) and elements that have otherwise been inserted / deleted
 /// (different identities).
 public protocol Matchable: Equatable {
-	func matchWith(other: Self) -> MatchResult
+	func match(other: Self) -> MatchResult
 }
 
 // Any types that implement Matchable's `matchWith()` method get Equatable for
 // free.
 public func == <T: Matchable>(lhs: T, rhs: T) -> Bool {
-	return lhs.matchWith(rhs) == .SameIdentityEqualValue
+	return lhs.match(rhs) == .SameIdentityEqualValue
 }
 
 // ----------------------------------------------------------------------------
@@ -81,31 +81,31 @@ public func && (result: MatchResult, @autoclosure rhs: () -> Bool) -> MatchResul
 // MARK: - Swift Types
 
 extension String: Matchable {
-	public func matchWith(other: String) -> MatchResult {
+	public func match(other: String) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Int: Matchable {
-	public func matchWith(other: Int) -> MatchResult {
+	public func match(other: Int) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Double: Matchable {
-	public func matchWith(other: Double) -> MatchResult {
+	public func match(other: Double) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Float: Matchable {
-	public func matchWith(other: Float) -> MatchResult {
+	public func match(other: Float) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Bool: Matchable {
-	public func matchWith(other: Bool) -> MatchResult {
+	public func match(other: Bool) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }

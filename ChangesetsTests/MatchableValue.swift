@@ -27,7 +27,7 @@ struct MatchableValue {
 }
 
 extension MatchableValue: Matchable {
-	func matchWith(other: MatchableValue) -> MatchResult {
+	func match(other: MatchableValue) -> MatchResult {
 		if name == other.name {
 			if rev == other.rev {
 				return .SameIdentityEqualValue
