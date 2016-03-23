@@ -119,9 +119,9 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 			// to differentiate between unchanged instances and updated 
 			// instances.
 			var rangeStart: Int?
-			for var i = 0; i < length; i++ {
-				let srcIdx = sourceIndex + i
-				let destIdx = destIndex + i
+			for idx in 0 ..< length {
+				let srcIdx = sourceIndex + idx
+				let destIdx = destIndex + idx
 
 				let srcVal = before[srcIdx]
 				let destVal = after[destIdx]

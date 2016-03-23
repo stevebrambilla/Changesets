@@ -44,7 +44,8 @@ extension DiffEngine {
 		var curBestLength = 0
 		var curBestIndex = -1
 
-		for var sourceIndex = sourceStart; sourceIndex <= sourceEnd; sourceIndex++ {
+		var sourceIndex = sourceStart
+		while sourceIndex <= sourceEnd {
 			let maxLength = min(maxDestLength, (sourceEnd - sourceIndex + 1))
 			if maxLength <= curBestLength {
 				// No chance to find a longer one
@@ -60,6 +61,8 @@ extension DiffEngine {
 
 			// Jump over the match
 			sourceIndex += curBestLength
+
+			sourceIndex += 1
 		}
 
 		if curBestIndex == -1 {
@@ -70,12 +73,15 @@ extension DiffEngine {
 	}
 
 	private func findSourceMatchLength(destIndex: Int, sourceIndex: Int, maxLength: Int) -> Int {
-		var matchCount: Int
-		for matchCount = 0; matchCount < maxLength; matchCount++ {
+		var matchCount = 0
+
+		while matchCount < maxLength {
 			if !isMatch(destList[destIndex + matchCount], sourceList[sourceIndex + matchCount]) {
 				break
 			}
+			matchCount += 1
 		}
+
 		return matchCount
 	}
 
@@ -84,11 +90,12 @@ extension DiffEngine {
 		var curBestLength = -1
 		var bestItem = DiffStatus.Unknown
 
-		for var destIndex = destStart; destIndex <= destEnd; destIndex++ {
+		var destIndex = destStart
+		while destIndex <= destEnd {
 			let maxPossibleDestLength = destEnd - destIndex + 1
 			if maxPossibleDestLength <= curBestLength {
 				// We won't find a longer one even if we looked
-				break;
+				break
 			}
 
 			var curItem = statusTable[destIndex] ?? .Unknown
@@ -130,6 +137,8 @@ extension DiffEngine {
 			case .NoMatch, .Unknown:
 				break
 			}
+
+			destIndex += 1
 		}
 
 		switch bestItem {
