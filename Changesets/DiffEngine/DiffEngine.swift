@@ -166,7 +166,10 @@ extension DiffEngine {
 // MARK: Report
 
 extension DiffEngine {
-	private func findIntermediateChanges(var curDest: Int, nextDest: Int, var curSource: Int, nextSource: Int) -> [DiffResultSpan] {
+	private func findIntermediateChanges(curDest: Int, nextDest: Int, curSource: Int, nextSource: Int) -> [DiffResultSpan] {
+		var curDest = curDest
+		var curSource = curSource
+
 		var changes = [DiffResultSpan]()
 		let diffDest = nextDest - curDest
 		let diffSource = nextSource - curSource

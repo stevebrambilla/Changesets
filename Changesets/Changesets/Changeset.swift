@@ -59,12 +59,12 @@ extension Changeset {
 		// If everything in the `before` collection is deleted or everything in
 		// the after collection is inserted, then it's considered a full 
 		// replacement.
-		let fullDeletedRange = Range(start: 0, end: countBefore)
+		let fullDeletedRange = (0 ..< countBefore)
 		if let deletedRange = deleted.first where deletedRange == fullDeletedRange {
 			return true
 		}
 
-		let fullInsertedRange = Range(start: 0, end: countAfter)
+		let fullInsertedRange = (0 ..< countAfter)
 		if let insertedRange = inserted.first where insertedRange == fullInsertedRange {
 			return true
 		}
@@ -131,7 +131,7 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 					// Values are equal, end the current 'updated` range if needed.
 					if let start = rangeStart {
 						let rangeEnd = srcIdx
-						let range = Range(start: start, end: rangeEnd)
+						let range = (start ..< rangeEnd)
 						updated.append(range)
 						rangeStart = nil
 					}
@@ -150,26 +150,26 @@ private func calculateChangeset<T, C: CollectionType where T == C.Generator.Elem
 			// Done this span, end the current 'updated' range if there is one.
 			if let start = rangeStart {
 				let rangeEnd = sourceIndex + length
-				let range = Range(start: start, end: rangeEnd)
+				let range = (start ..< rangeEnd)
 				updated.append(range)
 			}
 
 		case let .Replace(sourceIndex, destIndex, length):
 			// 'Replace' spans are analagous to a delete and an insert.
-			let deleteRange = Range(start: sourceIndex, end: sourceIndex+length)
+			let deleteRange = (sourceIndex ..< sourceIndex+length)
 			deleted.append(deleteRange)
 
-			let addRange = Range(start: destIndex, end: destIndex+length)
+			let addRange = (destIndex ..< destIndex+length)
 			inserted.append(addRange)
 
 		case let .Delete(sourceIndex, length):
 			// Map `Delete` spans directly to deleted ranges.
-			let range = Range(start: sourceIndex, end: sourceIndex+length)
+			let range = (sourceIndex ..< sourceIndex+length)
 			deleted.append(range)
 
 		case let .Add(destIndex, length):
 			// Map `Add` spans directly to inserted ranges.
-			let range = Range(start: destIndex, end: destIndex+length)
+			let range = (destIndex ..< destIndex+length)
 			inserted.append(range)
 		}
 	}
@@ -194,7 +194,7 @@ private func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
 	var consolidated = [Range<T>]()
 	for current in ranges {
 		if let last = consolidated.last where last.endIndex == current.startIndex {
-			let flattened = Range(start: last.startIndex, end: current.endIndex)
+			let flattened = (last.startIndex ..< current.endIndex)
 			consolidated.removeLast()
 			consolidated.append(flattened)
 		} else {
