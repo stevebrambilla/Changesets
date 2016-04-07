@@ -14,9 +14,12 @@
 		AA1BCD651BD9D54B00AB6D1C /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6F1B7FE01200840D1E /* DiffEngine.swift */; };
 		AA1BCD661BD9D54B00AB6D1C /* DiffResultSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB701B7FE01200840D1E /* DiffResultSpan.swift */; };
 		AA1BCD671BD9D54B00AB6D1C /* DiffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB711B7FE01200840D1E /* DiffStatus.swift */; };
-		AA1BCD681BD9D55000AB6D1C /* Changeset+IndexPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB731B7FE01200840D1E /* Changeset+IndexPaths.swift */; };
 		AA1BCD691BD9D55000AB6D1C /* UICollectionView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB741B7FE01200840D1E /* UICollectionView+Changesets.swift */; };
 		AA1BCD6A1BD9D55000AB6D1C /* UITableView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB751B7FE01200840D1E /* UITableView+Changesets.swift */; };
+		AA6DE7D11CB5FC8000591C0C /* Changeset-IndexSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6DE7D01CB5FC8000591C0C /* Changeset-IndexSet.swift */; };
+		AA6DE7D21CB5FC8000591C0C /* Changeset-IndexSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6DE7D01CB5FC8000591C0C /* Changeset-IndexSet.swift */; };
+		AA6DE7D51CB5FCB600591C0C /* Changeset-IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6DE7D41CB5FCB600591C0C /* Changeset-IndexPath.swift */; };
+		AA6DE7D61CB5FCB600591C0C /* Changeset-IndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6DE7D41CB5FCB600591C0C /* Changeset-IndexPath.swift */; };
 		AAC5BB571B7FDF2200840D1E /* Changesets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */; };
 		AAC5BB681B7FE00500840D1E /* Changesets.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC5BB661B7FE00500840D1E /* Changesets.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AAC5BB761B7FE01200840D1E /* Changeset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6B1B7FE01200840D1E /* Changeset.swift */; };
@@ -25,7 +28,6 @@
 		AAC5BB791B7FE01200840D1E /* DiffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB6F1B7FE01200840D1E /* DiffEngine.swift */; };
 		AAC5BB7A1B7FE01200840D1E /* DiffResultSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB701B7FE01200840D1E /* DiffResultSpan.swift */; };
 		AAC5BB7B1B7FE01200840D1E /* DiffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB711B7FE01200840D1E /* DiffStatus.swift */; };
-		AAC5BB7C1B7FE01200840D1E /* Changeset+IndexPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB731B7FE01200840D1E /* Changeset+IndexPaths.swift */; };
 		AAC5BB7D1B7FE01200840D1E /* UICollectionView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB741B7FE01200840D1E /* UICollectionView+Changesets.swift */; };
 		AAC5BB7E1B7FE01200840D1E /* UITableView+Changesets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BB751B7FE01200840D1E /* UITableView+Changesets.swift */; };
 		AAC5BBA51B7FE16A00840D1E /* DiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC5BBA31B7FE16A00840D1E /* DiffTests.swift */; };
@@ -46,6 +48,8 @@
 
 /* Begin PBXFileReference section */
 		AA1BCD591BD9D47B00AB6D1C /* Changesets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Changesets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA6DE7D01CB5FC8000591C0C /* Changeset-IndexSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Changeset-IndexSet.swift"; sourceTree = "<group>"; };
+		AA6DE7D41CB5FCB600591C0C /* Changeset-IndexPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Changeset-IndexPath.swift"; sourceTree = "<group>"; };
 		AAC5BB4C1B7FDF2200840D1E /* Changesets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Changesets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC5BB561B7FDF2200840D1E /* ChangesetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChangesetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC5BB5D1B7FDF2200840D1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -57,7 +61,6 @@
 		AAC5BB6F1B7FE01200840D1E /* DiffEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffEngine.swift; sourceTree = "<group>"; };
 		AAC5BB701B7FE01200840D1E /* DiffResultSpan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffResultSpan.swift; sourceTree = "<group>"; };
 		AAC5BB711B7FE01200840D1E /* DiffStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffStatus.swift; sourceTree = "<group>"; };
-		AAC5BB731B7FE01200840D1E /* Changeset+IndexPaths.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Changeset+IndexPaths.swift"; sourceTree = "<group>"; };
 		AAC5BB741B7FE01200840D1E /* UICollectionView+Changesets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Changesets.swift"; sourceTree = "<group>"; };
 		AAC5BB751B7FE01200840D1E /* UITableView+Changesets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+Changesets.swift"; sourceTree = "<group>"; };
 		AAC5BBA31B7FE16A00840D1E /* DiffTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffTests.swift; sourceTree = "<group>"; };
@@ -136,8 +139,10 @@
 		AAC5BB6A1B7FE01200840D1E /* Changesets */ = {
 			isa = PBXGroup;
 			children = (
-				AAC5BB6B1B7FE01200840D1E /* Changeset.swift */,
 				AAC5BB6C1B7FE01200840D1E /* Matchable.swift */,
+				AAC5BB6B1B7FE01200840D1E /* Changeset.swift */,
+				AA6DE7D01CB5FC8000591C0C /* Changeset-IndexSet.swift */,
+				AA6DE7D41CB5FCB600591C0C /* Changeset-IndexPath.swift */,
 			);
 			path = Changesets;
 			sourceTree = "<group>";
@@ -156,7 +161,6 @@
 		AAC5BB721B7FE01200840D1E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				AAC5BB731B7FE01200840D1E /* Changeset+IndexPaths.swift */,
 				AAC5BB741B7FE01200840D1E /* UICollectionView+Changesets.swift */,
 				AAC5BB751B7FE01200840D1E /* UITableView+Changesets.swift */,
 			);
@@ -327,12 +331,13 @@
 			files = (
 				AA1BCD671BD9D54B00AB6D1C /* DiffStatus.swift in Sources */,
 				AA1BCD661BD9D54B00AB6D1C /* DiffResultSpan.swift in Sources */,
+				AA6DE7D61CB5FCB600591C0C /* Changeset-IndexPath.swift in Sources */,
 				AA1BCD641BD9D54B00AB6D1C /* Diff.swift in Sources */,
+				AA6DE7D21CB5FC8000591C0C /* Changeset-IndexSet.swift in Sources */,
 				AA1BCD691BD9D55000AB6D1C /* UICollectionView+Changesets.swift in Sources */,
 				AA1BCD6A1BD9D55000AB6D1C /* UITableView+Changesets.swift in Sources */,
 				AA1BCD621BD9D54500AB6D1C /* Changeset.swift in Sources */,
 				AA1BCD651BD9D54B00AB6D1C /* DiffEngine.swift in Sources */,
-				AA1BCD681BD9D55000AB6D1C /* Changeset+IndexPaths.swift in Sources */,
 				AA1BCD631BD9D54500AB6D1C /* Matchable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,12 +348,13 @@
 			files = (
 				AAC5BB7B1B7FE01200840D1E /* DiffStatus.swift in Sources */,
 				AAC5BB7A1B7FE01200840D1E /* DiffResultSpan.swift in Sources */,
+				AA6DE7D51CB5FCB600591C0C /* Changeset-IndexPath.swift in Sources */,
 				AAC5BB781B7FE01200840D1E /* Diff.swift in Sources */,
+				AA6DE7D11CB5FC8000591C0C /* Changeset-IndexSet.swift in Sources */,
 				AAC5BB7D1B7FE01200840D1E /* UICollectionView+Changesets.swift in Sources */,
 				AAC5BB7E1B7FE01200840D1E /* UITableView+Changesets.swift in Sources */,
 				AAC5BB761B7FE01200840D1E /* Changeset.swift in Sources */,
 				AAC5BB791B7FE01200840D1E /* DiffEngine.swift in Sources */,
-				AAC5BB7C1B7FE01200840D1E /* Changeset+IndexPaths.swift in Sources */,
 				AAC5BB771B7FE01200840D1E /* Matchable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -564,6 +570,7 @@
 				AA1BCD601BD9D47B00AB6D1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AAC5BB461B7FDF2200840D1E /* Build configuration list for PBXProject "Changesets" */ = {
 			isa = XCConfigurationList;

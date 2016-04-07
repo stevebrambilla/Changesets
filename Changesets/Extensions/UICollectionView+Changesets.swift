@@ -13,7 +13,8 @@ import UIKit
 
 extension UICollectionView {
 	/// Applies the `Changeset` to the UICollectionView by inserting, deleting,
-	/// or reloading the index paths.
+	/// or reloading the items in the first section. This assumes the collection
+	/// view is displaying a single section.
 	///
 	/// The changes are performed as a batch update so they are animated 
 	/// together.
@@ -28,11 +29,54 @@ extension UICollectionView {
 		}
 
 		performBatchUpdates({
-			self.reloadItemsAtIndexPaths(changeset.updatedIndexPaths)
-			self.deleteItemsAtIndexPaths(changeset.deletedIndexPaths)
-			self.insertItemsAtIndexPaths(changeset.insertedIndexPaths)
+			self.reloadItemsAtIndexPaths(changeset.updatedIndexPaths(0))
+			self.deleteItemsAtIndexPaths(changeset.deletedIndexPaths(0))
+			self.insertItemsAtIndexPaths(changeset.insertedIndexPaths(0))
 		}, completion: completion)
 	}
 
-	// TODO: We may want to provide an applyChangeset(changeset: toSection: ...) later...
+	/// Calls the section updating methods corresponding to the changeset, in
+	/// the following order:
+	///
+	/// - reloadSections(sections:)
+	/// - deleteSections(sections:)
+	/// - insertSections(sections:)
+	///
+	/// This method does not perform any batching. Batching is left to the 
+	/// caller so that calls to updateSections(changeset:) and
+	/// updateItems(changeset:) can be combined within the same batch.
+	///
+	/// - parameter changeset: the set of section changes to pass through to the
+	///   collection view.
+	public func updateSections(changeset: Changeset) {
+		reloadSections(changeset.updatedIndexSet)
+		deleteSections(changeset.deletedIndexSet)
+		insertSections(changeset.insertedIndexSet)
+	}
+
+	/// Calls the item updating methods corresponding to the changeset, in
+	/// the following order:
+	///
+	/// - reloadItemsAtIndexPaths(indexPaths:)
+	/// - deleteItemsAtIndexPaths(indexPaths:)
+	/// - insertItemsAtIndexPaths(indexPaths:)
+	///
+	/// This method does not perform any batching. Batching is left to the
+	/// caller so that calls to updateSections(changeset:) and
+	/// updateItems(changeset:) can be combined within the same batch.
+	///
+	/// The "from" and "to" sections must be specified so the correct index 
+	/// paths can be constructed from the Changeset.
+	///
+	/// - parameter changeset: the set of item changes to pass through to the
+	///   collection view.
+	/// - parameter fromSection: the section index relative to the collection 
+	///   view’s state _before_ the changeset.
+	/// - parameter toSection: the section index relative to the collection
+	///   view’s state _after_ the changeset.
+	public func updateItems(changeset: Changeset, fromSection: Int, toSection: Int) {
+		reloadItemsAtIndexPaths(changeset.updatedIndexPaths(fromSection))
+		deleteItemsAtIndexPaths(changeset.deletedIndexPaths(fromSection))
+		insertItemsAtIndexPaths(changeset.insertedIndexPaths(toSection))
+	}
 }
