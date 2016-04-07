@@ -54,10 +54,10 @@ extension Changeset: CustomStringConvertible {
 extension Changeset {
 	/// Returns the total number of changed indexes in the Changeset.
 	public var changedIndexesCount: Int {
-		let insCount = inserted.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
-		let delCount = deleted.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
-		let updCount = updated.reduce(0) { $0 + ($1.endIndex - $1.startIndex) }
-		return insCount + delCount + updCount
+		let insertedCount = inserted.reduce(0) { $0 + $1.count }
+		let deletedCount = deleted.reduce(0) { $0 + $1.count }
+		let updatedCount = updated.reduce(0) { $0 + $1.count }
+		return insertedCount + deletedCount + updatedCount
 	}
 
 	/// Returns true if there are no changed indexes in the Changeset.
@@ -123,7 +123,7 @@ extension CollectionType where Generator.Element: Matchable, Index == Int {
 	///
 	/// Provides high-fidelity matching using Matchable's `matchWith()` method.
 	public func changesetTo(after: Self) -> Changeset {
-		return calculateChangeset(from: self, to: after) { left, right in
+		return Changeset.calculateChangeset(from: self, to: after) { left, right in
 			left.match(right)
 		}
 	}
@@ -134,7 +134,7 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 	///
 	/// Provides low-fidelity matching by matching using value equality.
 	public func changesetTo(after: Self) -> Changeset {
-		return calculateChangeset(from: self, to: after) { left, right in
+		return Changeset.calculateChangeset(from: self, to: after) { left, right in
 			MatchResult.noIdentityCompare(left, right)
 		}
 	}
@@ -143,106 +143,107 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 // ----------------------------------------------------------------------------
 // MARK: - Calculating Changesets
 
-private func calculateChangeset<T, C: CollectionType where T == C.Generator.Element, C.Index == Int>(from before: C, to after: C, match: (T, T) -> MatchResult) -> Changeset {
-	// Calculate the diff between the two collections by comparing identity.
-	let report = before.diff(after) { left, right in
-		match(left, right) != .DifferentIdentity
-	}
+extension Changeset {
+	private static func calculateChangeset<T, C: CollectionType where T == C.Generator.Element, C.Index == Int>(from before: C, to after: C, match: (T, T) -> MatchResult) -> Changeset {
+		// Calculate the diff between the two collections by comparing identity.
+		let report = before.diff(after) { left, right in
+			match(left, right) != .DifferentIdentity
+		}
 
-	// Bucket the diff result spans into inserted, deleted, and updated ranges.
-	var inserted = [Range<Int>]()
-	var deleted = [Range<Int>]()
-	var updated = [Range<Int>]()
-	for span in report {
-		switch span {
-		case let .NoChange(sourceIndex, destIndex, length):
-			// The 'NoChange' case only considers identity differences. Do
-			// another pass over these ranges to compare their values in order
-			// to differentiate between unchanged instances and updated 
-			// instances.
-			var rangeStart: Int?
-			for idx in 0 ..< length {
-				let srcIdx = sourceIndex + idx
-				let destIdx = destIndex + idx
+		// Bucket the diff result spans into inserted, deleted, and updated ranges.
+		var inserted = [Range<Int>]()
+		var deleted = [Range<Int>]()
+		var updated = [Range<Int>]()
+		for span in report {
+			switch span {
+			case let .NoChange(sourceIndex, destIndex, length):
+				// The 'NoChange' case only considers identity differences. Do
+				// another pass over these ranges to compare their values in order
+				// to differentiate between unchanged instances and updated 
+				// instances.
+				var rangeStart: Int?
+				for idx in 0 ..< length {
+					let srcIdx = sourceIndex + idx
+					let destIdx = destIndex + idx
 
-				let srcVal = before[srcIdx]
-				let destVal = after[destIdx]
+					let srcVal = before[srcIdx]
+					let destVal = after[destIdx]
 
-				switch match(srcVal, destVal) {
-				case .SameIdentityEqualValue:
-					// Values are equal, end the current 'updated` range if needed.
-					if let start = rangeStart {
-						let rangeEnd = srcIdx
-						let range = (start ..< rangeEnd)
-						updated.append(range)
-						rangeStart = nil
+					switch match(srcVal, destVal) {
+					case .SameIdentityEqualValue:
+						// Values are equal, end the current 'updated` range if needed.
+						if let start = rangeStart {
+							let rangeEnd = srcIdx
+							let range = (start ..< rangeEnd)
+							updated.append(range)
+							rangeStart = nil
+						}
+
+					case .SameIdentityInequalValue:
+						// Values are not equal, start a new 'updated' range if needed.
+						if rangeStart == nil {
+							rangeStart = srcIdx
+						}
+
+					case .DifferentIdentity:
+						assertionFailure(".InequalIdentity should have been resolved in the diff.")
 					}
-
-				case .SameIdentityInequalValue:
-					// Values are not equal, start a new 'updated' range if needed.
-					if rangeStart == nil {
-						rangeStart = srcIdx
-					}
-
-				case .DifferentIdentity:
-					assertionFailure(".InequalIdentity should have been resolved in the diff.")
 				}
+
+				// Done this span, end the current 'updated' range if there is one.
+				if let start = rangeStart {
+					let rangeEnd = sourceIndex + length
+					let range = (start ..< rangeEnd)
+					updated.append(range)
+				}
+
+			case let .Replace(sourceIndex, destIndex, length):
+				// 'Replace' spans are analagous to a delete and an insert.
+				let deleteRange = (sourceIndex ..< sourceIndex+length)
+				deleted.append(deleteRange)
+
+				let addRange = (destIndex ..< destIndex+length)
+				inserted.append(addRange)
+
+			case let .Delete(sourceIndex, length):
+				// Map `Delete` spans directly to deleted ranges.
+				let range = (sourceIndex ..< sourceIndex+length)
+				deleted.append(range)
+
+			case let .Add(destIndex, length):
+				// Map `Add` spans directly to inserted ranges.
+				let range = (destIndex ..< destIndex+length)
+				inserted.append(range)
 			}
-
-			// Done this span, end the current 'updated' range if there is one.
-			if let start = rangeStart {
-				let rangeEnd = sourceIndex + length
-				let range = (start ..< rangeEnd)
-				updated.append(range)
-			}
-
-		case let .Replace(sourceIndex, destIndex, length):
-			// 'Replace' spans are analagous to a delete and an insert.
-			let deleteRange = (sourceIndex ..< sourceIndex+length)
-			deleted.append(deleteRange)
-
-			let addRange = (destIndex ..< destIndex+length)
-			inserted.append(addRange)
-
-		case let .Delete(sourceIndex, length):
-			// Map `Delete` spans directly to deleted ranges.
-			let range = (sourceIndex ..< sourceIndex+length)
-			deleted.append(range)
-
-		case let .Add(destIndex, length):
-			// Map `Add` spans directly to inserted ranges.
-			let range = (destIndex ..< destIndex+length)
-			inserted.append(range)
 		}
+
+		// Clean up the ranges by consolidating consecutive ranges together, then 
+		// determine if the changeset was a full replacement.
+		let consolidatedUpdates = consolidate(updated)
+		let consolidatedDeletes = consolidate(deleted)
+		let consolidatedInserts = consolidate(inserted)
+		return Changeset(
+			updated: consolidatedUpdates,
+			deleted: consolidatedDeletes,
+			inserted: consolidatedInserts,
+			countBefore: before.count,
+			countAfter: after.count
+		)
 	}
 
-	// Clean up the ranges by consolidating consecutive ranges together, then 
-	// determine if the changeset was a full replacement.
-	let consolidatedUpdates = consolidate(updated)
-	let consolidatedDeletes = consolidate(deleted)
-	let consolidatedInserts = consolidate(inserted)
-	return Changeset(
-		updated: consolidatedUpdates,
-		deleted: consolidatedDeletes,
-		inserted: consolidatedInserts,
-		countBefore: before.count,
-		countAfter: after.count
-	)
-}
-
-/// Flattens consecutive ranges together and returns a consolidated array of
-/// ranges.
-private func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
-	var consolidated = [Range<T>]()
-	for current in ranges {
-		if let last = consolidated.last where last.endIndex == current.startIndex {
-			let flattened = (last.startIndex ..< current.endIndex)
-			consolidated.removeLast()
-			consolidated.append(flattened)
-		} else {
-			consolidated.append(current)
+	/// Flattens consecutive ranges together and returns a consolidated array of
+	/// ranges.
+	private static func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
+		var consolidated = [Range<T>]()
+		for current in ranges {
+			if let last = consolidated.last where last.endIndex == current.startIndex {
+				let flattened = (last.startIndex ..< current.endIndex)
+				consolidated.removeLast()
+				consolidated.append(flattened)
+			} else {
+				consolidated.append(current)
+			}
 		}
+		return consolidated
 	}
-	return consolidated
 }
-
