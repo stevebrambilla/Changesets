@@ -18,11 +18,22 @@ import Foundation
 /// To apply a Changeset to an collection, apply the updated changes first, then
 /// the deleted changes, followed by the inserted changes.
 public struct Changeset: Equatable {
+	/// An array of index ranges corresponding to updated elements, sorted in 
+	/// ascending order.
 	public let updated: [Range<Int>]
+
+	/// An array of index ranges corresponding to deleted elements, sorted in
+	/// ascending order.
 	public let deleted: [Range<Int>]
+
+	/// An array of index ranges corresponding to inserted elements, sorted in
+	/// ascending order.
 	public let inserted: [Range<Int>]
 
+	/// The number of elements in the _before_ collection.
 	public let countBefore: Int
+
+	/// The number of elements in the _after_ collection.
 	public let countAfter: Int
 }
 
@@ -70,6 +81,37 @@ extension Changeset {
 		}
 
 		return false
+	}
+
+	/// Applies the changeset's modifications to the `beforeIndex` and returns
+	/// the "after" index.
+	///
+	/// Returns nil if the `beforeIndex` was deleted as part of the changeset.
+	public func afterIndexFor(beforeIndex: Int) -> Int? {
+		var deletes = 0
+		for deletedRange in deleted {
+			// If any of the deleted ranges contains `source`, return nil.
+			if deletedRange.contains(beforeIndex) {
+				return nil
+			}
+
+			// Subtract all ranges that preceed the before index.
+			if deletedRange.endIndex <= beforeIndex {
+				deletes += deletedRange.count
+			}
+		}
+
+		var position = beforeIndex - deletes
+
+		// Walk through the inserted ranges, bumping up the 'after' position by
+		// every range that would be inserted before it.
+		for insertedRange in inserted {
+			if insertedRange.startIndex <= position {
+				position += insertedRange.count
+			}
+		}
+
+		return position
 	}
 }
 

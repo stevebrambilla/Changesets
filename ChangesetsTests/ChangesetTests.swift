@@ -75,6 +75,14 @@ class ChangesetTests: XCTestCase {
 		// There were 6 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 6)
 		XCTAssertFalse(changeset.wasReplaced)
+
+		// Test tracking of indexes across the changeset.
+		XCTAssert(changeset.afterIndexFor(0) == nil)
+		XCTAssert(changeset.afterIndexFor(1) == 0)
+		XCTAssert(changeset.afterIndexFor(2) == 1)
+		XCTAssert(changeset.afterIndexFor(3) == 2)
+		XCTAssert(changeset.afterIndexFor(4) == 5)
+		XCTAssert(changeset.afterIndexFor(5) == 6)
 	}
 
 	func testEquatableChangeset() {
@@ -144,6 +152,14 @@ class ChangesetTests: XCTestCase {
 		// There were 8 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 8)
 		XCTAssertFalse(changeset.wasReplaced)
+
+		// Test tracking of indexes across the changeset.
+		XCTAssert(changeset.afterIndexFor(0) == nil)
+		XCTAssert(changeset.afterIndexFor(1) == 0)
+		XCTAssert(changeset.afterIndexFor(2) == 1)
+		XCTAssert(changeset.afterIndexFor(3) == nil) // Cannot track updated indexes without identity
+		XCTAssert(changeset.afterIndexFor(4) == 5)
+		XCTAssert(changeset.afterIndexFor(5) == nil) // Same, was updated
 	}
 
 	func testUpdateOnlyChangeset() {
@@ -173,6 +189,11 @@ class ChangesetTests: XCTestCase {
 		// There were 2 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 2)
 		XCTAssertFalse(changeset.wasReplaced)
+
+		// Test tracking of indexes across the changeset.
+		XCTAssert(changeset.afterIndexFor(0) == 0)
+		XCTAssert(changeset.afterIndexFor(1) == 1)
+		XCTAssert(changeset.afterIndexFor(2) == 2)
 	}
 
 	func testReplacementChangeset() {
@@ -206,6 +227,11 @@ class ChangesetTests: XCTestCase {
 
 		// This was a full replacement
 		XCTAssertTrue(changeset.wasReplaced)
+
+		// Test tracking of indexes across the changeset.
+		XCTAssert(changeset.afterIndexFor(0) == nil)
+		XCTAssert(changeset.afterIndexFor(1) == nil)
+		XCTAssert(changeset.afterIndexFor(2) == nil)
 	}
 
 	func testEmptyBeforeChangeset() {
@@ -253,5 +279,10 @@ class ChangesetTests: XCTestCase {
 
 		// This was a full replacement
 		XCTAssertTrue(changeset.wasReplaced)
+
+		// Test tracking of indexes across the changeset.
+		XCTAssert(changeset.afterIndexFor(0) == nil)
+		XCTAssert(changeset.afterIndexFor(1) == nil)
+		XCTAssert(changeset.afterIndexFor(2) == nil)
 	}
 }
