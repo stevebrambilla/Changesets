@@ -33,33 +33,33 @@ public struct TableViewChangesetPolicy {
 	/// The default Changeset Policy is to use the 'Automatic' row animation for
 	/// all changes.
 	public static var defaultPolicy: TableViewChangesetPolicy {
-		return TableViewChangesetPolicy(insertAnimation: .Automatic, deleteAnimation: .Automatic, updateAnimation: .Automatic, reloadForReplacements: false)
+		return TableViewChangesetPolicy(insertAnimation: .automatic, deleteAnimation: .automatic, updateAnimation: .automatic, reloadForReplacements: false)
 	}
 }
 
 extension TableViewChangesetPolicy {
-	private func applySectionInsertions(tableView: UITableView, sections: NSIndexSet) {
-		tableView.insertSections(sections, withRowAnimation: insertAnimation)
+	fileprivate func applySectionInsertions(tableView: UITableView, sections: IndexSet) {
+		tableView.insertSections(sections, with: insertAnimation)
 	}
 
-	private func applySectionDeletions(tableView: UITableView, sections: NSIndexSet) {
-		tableView.deleteSections(sections, withRowAnimation: deleteAnimation)
+	fileprivate func applySectionDeletions(tableView: UITableView, sections: IndexSet) {
+		tableView.deleteSections(sections, with: deleteAnimation)
 	}
 
-	private func applySectionUpdates(tableView: UITableView, sections: NSIndexSet) {
-		tableView.reloadSections(sections, withRowAnimation: updateAnimation)
+	fileprivate func applySectionUpdates(tableView: UITableView, sections: IndexSet) {
+		tableView.reloadSections(sections, with: updateAnimation)
 	}
 
-	private func applyRowInsertions(tableView: UITableView, indexPaths: [NSIndexPath]) {
-		tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: insertAnimation)
+	fileprivate func applyRowInsertions(tableView: UITableView, indexPaths: [IndexPath]) {
+		tableView.insertRows(at: indexPaths, with: insertAnimation)
 	}
 
-	private func applyRowDeletions(tableView: UITableView, indexPaths: [NSIndexPath]) {
-		tableView.deleteRowsAtIndexPaths(indexPaths, withRowAnimation: deleteAnimation)
+	fileprivate func applyRowDeletions(tableView: UITableView, indexPaths: [IndexPath]) {
+		tableView.deleteRows(at: indexPaths, with: deleteAnimation)
 	}
 
-	private func applyRowUpdates(tableView: UITableView, indexPaths: [NSIndexPath]) {
-		tableView.reloadRowsAtIndexPaths(indexPaths, withRowAnimation: updateAnimation)
+	fileprivate func applyRowUpdates(tableView: UITableView, indexPaths: [IndexPath]) {
+		tableView.reloadRows(at: indexPaths, with: updateAnimation)
 	}
 }
 
@@ -86,24 +86,19 @@ extension UITableView {
 
 		beginUpdates()
 
-		policy.applyRowUpdates(self, indexPaths: changeset.updatedIndexPaths(0))
-		policy.applyRowDeletions(self, indexPaths: changeset.deletedIndexPaths(0))
-		policy.applyRowInsertions(self, indexPaths: changeset.insertedIndexPaths(0))
+		policy.applyRowUpdates(tableView: self, indexPaths: changeset.updatedIndexPaths(section: 0))
+		policy.applyRowDeletions(tableView: self, indexPaths: changeset.deletedIndexPaths(section: 0))
+		policy.applyRowInsertions(tableView: self, indexPaths: changeset.insertedIndexPaths(section: 0))
 
 		endUpdates()
 	}
 
-	///
-	/// NOTE: Does not trigger reload
-	/// NOTE: Must be called withing update blocks
-
-
 	/// Calls the section updating methods corresponding to the changeset, in
 	/// the following order:
 	///
-	/// - reloadSections(sections:withRowAnimation:)
-	/// - deleteSections(sections:withRowAnimation:)
-	/// - insertSections(sections:withRowAnimation:)
+	/// - reloadSections(_: with:)
+	/// - deleteSections(_: with:)
+	/// - insertSections(_: with:)
 	///
 	/// This method does not perform any batching. Batching is left to the
 	/// caller so that calls to updateSections(changeset:) and
@@ -113,17 +108,17 @@ extension UITableView {
 	///   table view.
 	/// - parameter policy: optionally override the default animation policy.
 	public func updateSections(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
-		policy.applySectionUpdates(self, sections: changeset.updatedIndexSet)
-		policy.applySectionDeletions(self, sections: changeset.deletedIndexSet)
-		policy.applySectionInsertions(self, sections: changeset.insertedIndexSet)
+		policy.applySectionUpdates(tableView: self, sections: changeset.updatedIndexSet)
+		policy.applySectionDeletions(tableView: self, sections: changeset.deletedIndexSet)
+		policy.applySectionInsertions(tableView: self, sections: changeset.insertedIndexSet)
 	}
 
 	/// Calls the item updating methods corresponding to the changeset, in
 	/// the following order:
 	///
-	/// - reloadRowsAtIndexPaths(indexPaths:)
-	/// - deleteRowsAtIndexPaths(indexPaths:)
-	/// - insertRowsAtIndexPaths(indexPaths:)
+	/// - reloadRows(at: with:)
+	/// - deleteRows(at: with:)
+	/// - insertRows(at: with:)
 	///
 	/// This method does not perform any batching. Batching is left to the
 	/// caller so that calls to updateSections(changeset:) and
@@ -139,8 +134,8 @@ extension UITableView {
 	/// - parameter toSection: the section index relative to the table view's
 	///   state _after_ the changeset.
 	public func updateRows(changeset: Changeset, fromSection: Int, toSection: Int, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
-		policy.applyRowUpdates(self, indexPaths: changeset.updatedIndexPaths(fromSection))
-		policy.applyRowDeletions(self, indexPaths: changeset.deletedIndexPaths(fromSection))
-		policy.applyRowInsertions(self, indexPaths: changeset.insertedIndexPaths(toSection))
+		policy.applyRowUpdates(tableView: self, indexPaths: changeset.updatedIndexPaths(section: fromSection))
+		policy.applyRowDeletions(tableView: self, indexPaths: changeset.deletedIndexPaths(section: fromSection))
+		policy.applyRowInsertions(tableView: self, indexPaths: changeset.insertedIndexPaths(section: toSection))
 	}
 }

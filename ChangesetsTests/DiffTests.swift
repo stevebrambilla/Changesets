@@ -15,7 +15,7 @@ class DiffTests: XCTestCase {
 		let source = [1, 2, 3, 9, 8, 2, 3, 4, 5, 6]
 		let dest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-		let report = source.diff(dest, precision: .FastImperfect)
+		let report = dest.diff(against: source, precision: .fastImperfect)
 
 		XCTAssertEqual(report.count, 4)
 
@@ -46,7 +46,7 @@ class DiffTests: XCTestCase {
 		let source = [1, 3]
 		let dest = [1, 2, 3]
 
-		let report = source.diff(dest, precision: .FastImperfect)
+		let report = dest.diff(against: source, precision: .fastImperfect)
 
 		XCTAssertEqual(report.count, 3)
 
@@ -72,7 +72,7 @@ class DiffTests: XCTestCase {
 		let source = [1, 2, 3]
 		let dest = [1, 2]
 
-		let report = source.diff(dest, precision: .FastImperfect)
+		let report = dest.diff(against: source, precision: .fastImperfect)
 
 		XCTAssertEqual(report.count, 2)
 
@@ -92,7 +92,7 @@ class DiffTests: XCTestCase {
 		let source = [1, 2, 3]
 		let dest = [4, 5, 6, 7]
 
-		let report = source.diff(dest, precision: .FastImperfect)
+		let report = dest.diff(against: source, precision: .fastImperfect)
 
 		XCTAssertEqual(report.count, 2)
 
@@ -112,7 +112,7 @@ class DiffTests: XCTestCase {
 		let source = [1, 5, 6, 7]
 		let dest = [1, 3, 5, 7]
 
-		let report = source.diff(dest, precision: .FastImperfect)
+		let report = dest.diff(against: source, precision: .fastImperfect)
 
 		XCTAssertEqual(report.count, 5)
 

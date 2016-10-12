@@ -20,15 +20,15 @@ import Foundation
 public struct Changeset: Equatable {
 	/// An array of index ranges corresponding to updated elements, sorted in 
 	/// ascending order.
-	public let updated: [Range<Int>]
+	public let updated: [CountableRange<Int>]
 
 	/// An array of index ranges corresponding to deleted elements, sorted in
 	/// ascending order.
-	public let deleted: [Range<Int>]
+	public let deleted: [CountableRange<Int>]
 
 	/// An array of index ranges corresponding to inserted elements, sorted in
 	/// ascending order.
-	public let inserted: [Range<Int>]
+	public let inserted: [CountableRange<Int>]
 
 	/// The number of elements in the _before_ collection.
 	public let countBefore: Int
@@ -71,12 +71,12 @@ extension Changeset {
 		// the after collection is inserted, then it's considered a full 
 		// replacement.
 		let fullDeletedRange = (0 ..< countBefore)
-		if let deletedRange = deleted.first where deletedRange == fullDeletedRange {
+		if let deletedRange = deleted.first, deletedRange == fullDeletedRange {
 			return true
 		}
 
 		let fullInsertedRange = (0 ..< countAfter)
-		if let insertedRange = inserted.first where insertedRange == fullInsertedRange {
+		if let insertedRange = inserted.first, insertedRange == fullInsertedRange {
 			return true
 		}
 
@@ -96,7 +96,7 @@ extension Changeset {
 			}
 
 			// Subtract all ranges that preceed the before index.
-			if deletedRange.endIndex <= beforeIndex {
+			if deletedRange.upperBound <= beforeIndex {
 				deletes += deletedRange.count
 			}
 		}
@@ -106,7 +106,7 @@ extension Changeset {
 		// Walk through the inserted ranges, bumping up the 'after' position by
 		// every range that would be inserted before it.
 		for insertedRange in inserted {
-			if insertedRange.startIndex <= position {
+			if insertedRange.lowerBound <= position {
 				position += insertedRange.count
 			}
 		}
@@ -118,22 +118,22 @@ extension Changeset {
 // ----------------------------------------------------------------------------
 // MARK: - CollectionType Extensions
 
-extension CollectionType where Generator.Element: Matchable, Index == Int {
+extension Collection where Iterator.Element: Matchable, Index == Int, IndexDistance == Int {
 	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides high-fidelity matching using Matchable's `matchWith()` method.
-	public func changesetTo(after: Self) -> Changeset {
+	public func changeset(to after: Self) -> Changeset {
 		return Changeset.calculateChangeset(from: self, to: after) { left, right in
 			left.match(right)
 		}
 	}
 }
 
-extension CollectionType where Generator.Element: Equatable, Index == Int {
+extension Collection where Iterator.Element: Equatable, Index == Int, IndexDistance == Int {
 	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides low-fidelity matching by matching using value equality.
-	public func changesetTo(after: Self) -> Changeset {
+	public func changeset(to after: Self) -> Changeset {
 		return Changeset.calculateChangeset(from: self, to: after) { left, right in
 			MatchResult.noIdentityCompare(left, right)
 		}
@@ -144,19 +144,19 @@ extension CollectionType where Generator.Element: Equatable, Index == Int {
 // MARK: - Calculating Changesets
 
 extension Changeset {
-	private static func calculateChangeset<T, C: CollectionType where T == C.Generator.Element, C.Index == Int>(from before: C, to after: C, match: (T, T) -> MatchResult) -> Changeset {
+	fileprivate static func calculateChangeset<T, C: Collection>(from before: C, to after: C, match: @escaping (T, T) -> MatchResult) -> Changeset where T == C.Iterator.Element, C.Index == Int, C.IndexDistance == Int {
 		// Calculate the diff between the two collections by comparing identity.
-		let report = before.diff(after) { left, right in
-			match(left, right) != .DifferentIdentity
+		let report = after.diff(against: before) { left, right in
+			match(left, right) != .differentIdentity
 		}
 
 		// Bucket the diff result spans into inserted, deleted, and updated ranges.
-		var inserted = [Range<Int>]()
-		var deleted = [Range<Int>]()
-		var updated = [Range<Int>]()
+		var inserted = [CountableRange<Int>]()
+		var deleted = [CountableRange<Int>]()
+		var updated = [CountableRange<Int>]()
 		for span in report {
 			switch span {
-			case let .NoChange(sourceIndex, destIndex, length):
+			case let .noChange(sourceIndex, destIndex, length):
 				// The 'NoChange' case only considers identity differences. Do
 				// another pass over these ranges to compare their values in order
 				// to differentiate between unchanged instances and updated 
@@ -170,7 +170,7 @@ extension Changeset {
 					let destVal = after[destIdx]
 
 					switch match(srcVal, destVal) {
-					case .SameIdentityEqualValue:
+					case .sameIdentityEqualValue:
 						// Values are equal, end the current 'updated` range if needed.
 						if let start = rangeStart {
 							let rangeEnd = srcIdx
@@ -179,13 +179,13 @@ extension Changeset {
 							rangeStart = nil
 						}
 
-					case .SameIdentityInequalValue:
+					case .sameIdentityInequalValue:
 						// Values are not equal, start a new 'updated' range if needed.
 						if rangeStart == nil {
 							rangeStart = srcIdx
 						}
 
-					case .DifferentIdentity:
+					case .differentIdentity:
 						assertionFailure(".InequalIdentity should have been resolved in the diff.")
 					}
 				}
@@ -197,7 +197,7 @@ extension Changeset {
 					updated.append(range)
 				}
 
-			case let .Replace(sourceIndex, destIndex, length):
+			case let .replace(sourceIndex, destIndex, length):
 				// 'Replace' spans are analagous to a delete and an insert.
 				let deleteRange = (sourceIndex ..< sourceIndex+length)
 				deleted.append(deleteRange)
@@ -205,12 +205,12 @@ extension Changeset {
 				let addRange = (destIndex ..< destIndex+length)
 				inserted.append(addRange)
 
-			case let .Delete(sourceIndex, length):
+			case let .delete(sourceIndex, length):
 				// Map `Delete` spans directly to deleted ranges.
 				let range = (sourceIndex ..< sourceIndex+length)
 				deleted.append(range)
 
-			case let .Add(destIndex, length):
+			case let .add(destIndex, length):
 				// Map `Add` spans directly to inserted ranges.
 				let range = (destIndex ..< destIndex+length)
 				inserted.append(range)
@@ -219,9 +219,9 @@ extension Changeset {
 
 		// Clean up the ranges by consolidating consecutive ranges together, then 
 		// determine if the changeset was a full replacement.
-		let consolidatedUpdates = consolidate(updated)
-		let consolidatedDeletes = consolidate(deleted)
-		let consolidatedInserts = consolidate(inserted)
+		let consolidatedUpdates = consolidate(ranges: updated)
+		let consolidatedDeletes = consolidate(ranges: deleted)
+		let consolidatedInserts = consolidate(ranges: inserted)
 		return Changeset(
 			updated: consolidatedUpdates,
 			deleted: consolidatedDeletes,
@@ -233,11 +233,11 @@ extension Changeset {
 
 	/// Flattens consecutive ranges together and returns a consolidated array of
 	/// ranges.
-	private static func consolidate<T>(ranges: [Range<T>]) -> [Range<T>] {
-		var consolidated = [Range<T>]()
+	fileprivate static func consolidate<T>(ranges: [CountableRange<T>]) -> [CountableRange<T>] {
+		var consolidated = [CountableRange<T>]()
 		for current in ranges {
-			if let last = consolidated.last where last.endIndex == current.startIndex {
-				let flattened = (last.startIndex ..< current.endIndex)
+			if let last = consolidated.last , last.upperBound == current.lowerBound {
+				let flattened = (last.lowerBound ..< current.upperBound)
 				consolidated.removeLast()
 				consolidated.append(flattened)
 			} else {

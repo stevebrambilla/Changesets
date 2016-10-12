@@ -10,28 +10,28 @@ import Foundation
 
 extension Changeset {
 	/// Returns an index set with all of the changeset's updated indexes.
-	public var updatedIndexSet: NSIndexSet {
-		let indexSet = NSMutableIndexSet()
+	public var updatedIndexSet: IndexSet {
+		var indexSet = IndexSet()
 		for range in updated {
-			indexSet.addIndexesInRange(NSMakeRange(range.startIndex, range.count))
+			indexSet.insert(integersIn: range)
 		}
 		return indexSet
 	}
 
 	/// Returns an index set with all of the changeset's deleted indexes.
-	public var deletedIndexSet: NSIndexSet {
-		let indexSet = NSMutableIndexSet()
+	public var deletedIndexSet: IndexSet {
+		var indexSet = IndexSet()
 		for range in deleted {
-			indexSet.addIndexesInRange(NSMakeRange(range.startIndex, range.count))
+			indexSet.insert(integersIn: range)
 		}
 		return indexSet
 	}
 
 	/// Returns an index set with all of the changeset's inserted indexes.
-	public var insertedIndexSet: NSIndexSet {
-		let indexSet = NSMutableIndexSet()
+	public var insertedIndexSet: IndexSet {
+		var indexSet = IndexSet()
 		for range in inserted {
-			indexSet.addIndexesInRange(NSMakeRange(range.startIndex, range.count))
+			indexSet.insert(integersIn: range)
 		}
 		return indexSet
 	}

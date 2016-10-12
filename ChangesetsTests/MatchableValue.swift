@@ -27,15 +27,15 @@ struct MatchableValue {
 }
 
 extension MatchableValue: Matchable {
-	func match(other: MatchableValue) -> MatchResult {
+	func match(_ other: MatchableValue) -> MatchResult {
 		if name == other.name {
 			if rev == other.rev {
-				return .SameIdentityEqualValue
+				return .sameIdentityEqualValue
 			} else {
-				return .SameIdentityInequalValue
+				return .sameIdentityInequalValue
 			}
 		} else {
-			return .DifferentIdentity
+			return .differentIdentity
 		}
 	}
 }

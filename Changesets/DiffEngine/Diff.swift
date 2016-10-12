@@ -11,31 +11,31 @@ import Foundation
 /// The precision of the diff algorithm. The speed differences are significant
 /// as the data set size increases.
 ///
-/// FastImperfect is the default precision unless overridden.
+/// .fastImperfect is the default precision unless overridden.
 internal enum DiffPrecision {
-	case FastImperfect
-	case Medium
-	case SlowPerfect
+	case fastImperfect
+	case medium
+	case slowPerfect
 }
 
-extension CollectionType where Generator.Element: Equatable, Index == Int {
+extension Collection where Iterator.Element: Equatable, Index == Int, IndexDistance == Int {
 	/// Calculates the diff between two collections using the equality operator 
 	/// for matching.
 	///
 	/// Returns a `DiffResultsSpan` that represents the changes indexes.
-	internal func diff(dest: Self, precision: DiffPrecision = .FastImperfect) -> [DiffResultSpan] {
-		let engine = DiffEngine(sourceList: self, destList: dest, precision: precision) { $0 == $1 }
+	internal func diff(against source: Self, precision: DiffPrecision = .fastImperfect) -> [DiffResultSpan] {
+		let engine = DiffEngine(sourceList: source, destList: self, precision: precision) { $0 == $1 }
 		return engine.diffReport()
 	}
 }
 
-extension CollectionType where Index == Int {
+extension Collection where Index == Int, IndexDistance == Int {
 	/// Calculates the diff between two collections using the `isMatch` closure
 	/// for matching.
 	///
 	/// Returns a `DiffResultsSpan` that represents the changes indexes.
-	internal func diff(dest: Self, precision: DiffPrecision = .FastImperfect, isMatch: (Generator.Element, Generator.Element) -> Bool) -> [DiffResultSpan] {
-		let engine = DiffEngine(sourceList: self, destList: dest, precision: precision, isMatch: isMatch)
+	internal func diff(against source: Self, precision: DiffPrecision = .fastImperfect, isMatch: @escaping (Iterator.Element, Iterator.Element) -> Bool) -> [DiffResultSpan] {
+		let engine = DiffEngine(sourceList: source, destList: self, precision: precision, isMatch: isMatch)
 		return engine.diffReport()
 	}
 }

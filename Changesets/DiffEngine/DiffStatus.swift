@@ -9,23 +9,23 @@
 import Foundation
 
 internal enum DiffStatus: Equatable {
-	case Unknown
-	case Matched(start: Int, length: Int)
-	case NoMatch
+	case unknown
+	case matched(start: Int, length: Int)
+	case noMatch
 
 	internal func validate(newStart: Int, newEnd: Int, maxPossibleDestLength: Int) -> DiffStatus {
 		switch self {
-		case let .Matched(start, length):
+		case let .matched(start, length):
 			let endIndex = start + length - 1
 			if maxPossibleDestLength < length || start < newStart || endIndex > newEnd {
-				return .Unknown
+				return .unknown
 			}
 			return self
 
-		case .NoMatch:
+		case .noMatch:
 			return self
 
-		case .Unknown:
+		case .unknown:
 			return self
 		}
 	}
@@ -33,11 +33,11 @@ internal enum DiffStatus: Equatable {
 
 internal func == (lhs: DiffStatus, rhs: DiffStatus) -> Bool {
 	switch (lhs, rhs) {
-	case (.Unknown, .Unknown):
+	case (.unknown, .unknown):
 		return true
-	case let (.Matched(lStart, lLength), .Matched(rStart, rLength)):
+	case let (.matched(lStart, lLength), .matched(rStart, rLength)):
 		return lStart == rStart && lLength == rLength
-	case (.NoMatch, .NoMatch):
+	case (.noMatch, .noMatch):
 		return true
 	default:
 		return false
@@ -47,9 +47,9 @@ internal func == (lhs: DiffStatus, rhs: DiffStatus) -> Bool {
 extension DiffStatus: CustomStringConvertible {
 	internal var description: String {
 		switch self {
-		case let .Matched(start, length): return "{ Matched: start = \(start), length = \(length) }"
-		case .NoMatch: return "{ NoMatch }"
-		case .Unknown: return "{ Unknown }"
+		case let .matched(start, length): return "{ Matched: start = \(start), length = \(length) }"
+		case .noMatch: return "{ NoMatch }"
+		case .unknown: return "{ Unknown }"
 		}
 	}
 }

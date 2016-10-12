@@ -31,58 +31,58 @@ class ChangesetTests: XCTestCase {
 			MatchableValue(name: "K", rev: 0), // 7
 		]
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
-		var updatedGenerator = changeset.updated.generate()
-		var deletedGenerator = changeset.deleted.generate()
-		var insertedGenerator = changeset.inserted.generate()
+		var updatedIterator = changeset.updated.makeIterator()
+		var deletedIterator = changeset.deleted.makeIterator()
+		var insertedIterator = changeset.inserted.makeIterator()
 
 		// Delete 'A', source index
-		let aRange: Range<Int>! = deletedGenerator.next()
+		let aRange: CountableRange<Int>! = deletedIterator.next()
 		XCTAssert(aRange != nil)
-		XCTAssertEqual(aRange.startIndex, 0)
-		XCTAssertEqual(aRange.endIndex, 1)
+		XCTAssertEqual(aRange.lowerBound, 0)
+		XCTAssertEqual(aRange.upperBound, 1)
 
 		// Update 'D', source index
-		let dRange: Range<Int>! = updatedGenerator.next()
+		let dRange: CountableRange<Int>! = updatedIterator.next()
 		XCTAssert(dRange != nil)
-		XCTAssertEqual(dRange.startIndex, 3)
-		XCTAssertEqual(dRange.endIndex, 4)
+		XCTAssertEqual(dRange.lowerBound, 3)
+		XCTAssertEqual(dRange.upperBound, 4)
 
 		// Insert 'F' and 'G', dest index
-		let fgRange: Range<Int>! = insertedGenerator.next()
+		let fgRange: CountableRange<Int>! = insertedIterator.next()
 		XCTAssert(fgRange != nil)
-		XCTAssertEqual(fgRange.startIndex, 3)
-		XCTAssertEqual(fgRange.endIndex, 5)
+		XCTAssertEqual(fgRange.lowerBound, 3)
+		XCTAssertEqual(fgRange.upperBound, 5)
 
 		// Update 'I', source index
-		let iRange: Range<Int>! = updatedGenerator.next()
+		let iRange: CountableRange<Int>! = updatedIterator.next()
 		XCTAssert(iRange != nil)
-		XCTAssertEqual(iRange.startIndex, 5)
-		XCTAssertEqual(iRange.endIndex, 6)
+		XCTAssertEqual(iRange.lowerBound, 5)
+		XCTAssertEqual(iRange.upperBound, 6)
 
 		// Insert 'K', dest index
-		let kRange: Range<Int>! = insertedGenerator.next()
+		let kRange: CountableRange<Int>! = insertedIterator.next()
 		XCTAssert(kRange != nil)
-		XCTAssertEqual(kRange.startIndex, 7)
-		XCTAssertEqual(kRange.endIndex, 8)
+		XCTAssertEqual(kRange.lowerBound, 7)
+		XCTAssertEqual(kRange.upperBound, 8)
 
-		// All generators should be exhausted
-		XCTAssert(updatedGenerator.next() == nil)
-		XCTAssert(deletedGenerator.next() == nil)
-		XCTAssert(insertedGenerator.next() == nil)
+		// All iterators should be exhausted
+		XCTAssert(updatedIterator.next() == nil)
+		XCTAssert(deletedIterator.next() == nil)
+		XCTAssert(insertedIterator.next() == nil)
 
 		// There were 6 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 6)
 		XCTAssertFalse(changeset.wasReplaced)
 
 		// Test tracking of indexes across the changeset.
-		XCTAssert(changeset.afterIndexFor(0) == nil)
-		XCTAssert(changeset.afterIndexFor(1) == 0)
-		XCTAssert(changeset.afterIndexFor(2) == 1)
-		XCTAssert(changeset.afterIndexFor(3) == 2)
-		XCTAssert(changeset.afterIndexFor(4) == 5)
-		XCTAssert(changeset.afterIndexFor(5) == 6)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 0) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 1) == 0)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 2) == 1)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 3) == 2)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 4) == 5)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 5) == 6)
 	}
 
 	func testEquatableChangeset() {
@@ -105,61 +105,61 @@ class ChangesetTests: XCTestCase {
 			EquatableValue(name: "K", rev: 0), // 7
 		]
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
 		// No updated ranges when relying on Equatable for matching
 		XCTAssertEqual(changeset.updated.count, 0)
 
 		// --- Deletions
-		var deletedGenerator = changeset.deleted.generate()
+		var deletedIterator = changeset.deleted.makeIterator()
 
 		// Delete 'A'
-		let aRange: Range<Int>! = deletedGenerator.next()
+		let aRange: CountableRange<Int>! = deletedIterator.next()
 		XCTAssert(aRange != nil)
-		XCTAssertEqual(aRange.startIndex, 0)
-		XCTAssertEqual(aRange.endIndex, 1)
+		XCTAssertEqual(aRange.lowerBound, 0)
+		XCTAssertEqual(aRange.upperBound, 1)
 
 		// Delete 'D' (was updated)
-		let dRange: Range<Int>! = deletedGenerator.next()
+		let dRange: CountableRange<Int>! = deletedIterator.next()
 		XCTAssert(dRange != nil)
-		XCTAssertEqual(dRange.startIndex, 3)
-		XCTAssertEqual(dRange.endIndex, 4)
+		XCTAssertEqual(dRange.lowerBound, 3)
+		XCTAssertEqual(dRange.upperBound, 4)
 
 		// Delete 'I' (was updated)
-		let iRange: Range<Int>! = deletedGenerator.next()
+		let iRange: CountableRange<Int>! = deletedIterator.next()
 		XCTAssert(iRange != nil)
-		XCTAssertEqual(iRange.startIndex, 5)
-		XCTAssertEqual(iRange.endIndex, 6)
+		XCTAssertEqual(iRange.lowerBound, 5)
+		XCTAssertEqual(iRange.upperBound, 6)
 
 		// --- Inserts
-		var insertedGenerator = changeset.inserted.generate()
+		var insertedIterator = changeset.inserted.makeIterator()
 
 		// Insert 'D' (was updated), 'F', and 'G'
-		let dfgRange: Range<Int>! = insertedGenerator.next()
+		let dfgRange: CountableRange<Int>! = insertedIterator.next()
 		XCTAssert(dfgRange != nil)
-		XCTAssertEqual(dfgRange.startIndex, 2)
-		XCTAssertEqual(dfgRange.endIndex, 5)
+		XCTAssertEqual(dfgRange.lowerBound, 2)
+		XCTAssertEqual(dfgRange.upperBound, 5)
 
 		// Insert 'I' (was updated), and 'K'
-		let ikRange: Range<Int>! = insertedGenerator.next()
+		let ikRange: CountableRange<Int>! = insertedIterator.next()
 		XCTAssert(ikRange != nil)
-		XCTAssertEqual(ikRange.startIndex, 6)
-		XCTAssertEqual(ikRange.endIndex, 8)
+		XCTAssertEqual(ikRange.lowerBound, 6)
+		XCTAssertEqual(ikRange.upperBound, 8)
 
-		XCTAssert(deletedGenerator.next() == nil)
-		XCTAssert(insertedGenerator.next() == nil)
+		XCTAssert(deletedIterator.next() == nil)
+		XCTAssert(insertedIterator.next() == nil)
 
 		// There were 8 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 8)
 		XCTAssertFalse(changeset.wasReplaced)
 
 		// Test tracking of indexes across the changeset.
-		XCTAssert(changeset.afterIndexFor(0) == nil)
-		XCTAssert(changeset.afterIndexFor(1) == 0)
-		XCTAssert(changeset.afterIndexFor(2) == 1)
-		XCTAssert(changeset.afterIndexFor(3) == nil) // Cannot track updated indexes without identity
-		XCTAssert(changeset.afterIndexFor(4) == 5)
-		XCTAssert(changeset.afterIndexFor(5) == nil) // Same, was updated
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 0) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 1) == 0)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 2) == 1)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 3) == nil) // Cannot track updated indexes without identity
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 4) == 5)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 5) == nil) // Same, was updated
 	}
 
 	func testUpdateOnlyChangeset() {
@@ -174,26 +174,26 @@ class ChangesetTests: XCTestCase {
 			MatchableValue(name: "C", rev: 1), // 2
 		]
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
 		XCTAssertEqual(changeset.updated.count, 1)
 		XCTAssertEqual(changeset.deleted.count, 0)
 		XCTAssertEqual(changeset.inserted.count, 0)
 
 		// Update B & C
-		let bcRange: Range<Int>! = changeset.updated.first
+		let bcRange: CountableRange<Int>! = changeset.updated.first
 		XCTAssert(bcRange != nil)
-		XCTAssertEqual(bcRange.startIndex, 1)
-		XCTAssertEqual(bcRange.endIndex, 3)
+		XCTAssertEqual(bcRange.lowerBound, 1)
+		XCTAssertEqual(bcRange.upperBound, 3)
 
 		// There were 2 indexes changes in total
 		XCTAssertEqual(changeset.changedIndexesCount, 2)
 		XCTAssertFalse(changeset.wasReplaced)
 
 		// Test tracking of indexes across the changeset.
-		XCTAssert(changeset.afterIndexFor(0) == 0)
-		XCTAssert(changeset.afterIndexFor(1) == 1)
-		XCTAssert(changeset.afterIndexFor(2) == 2)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 0) == 0)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 1) == 1)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 2) == 2)
 	}
 
 	func testReplacementChangeset() {
@@ -209,7 +209,7 @@ class ChangesetTests: XCTestCase {
 			EquatableValue(name: "G", rev: 0), // 3
 		]
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
 		XCTAssertEqual(changeset.updated.count, 0)
 		XCTAssertEqual(changeset.deleted.count, 1)
@@ -217,21 +217,21 @@ class ChangesetTests: XCTestCase {
 
 		// Delete All
 		let deletedRange = changeset.deleted.first!
-		XCTAssertEqual(deletedRange.startIndex, 0)
-		XCTAssertEqual(deletedRange.endIndex, 3)
+		XCTAssertEqual(deletedRange.lowerBound, 0)
+		XCTAssertEqual(deletedRange.upperBound, 3)
 
 		// Insert All
 		let insertedRange = changeset.inserted.first!
-		XCTAssertEqual(insertedRange.startIndex, 0)
-		XCTAssertEqual(insertedRange.endIndex, 4)
+		XCTAssertEqual(insertedRange.lowerBound, 0)
+		XCTAssertEqual(insertedRange.upperBound, 4)
 
 		// This was a full replacement
 		XCTAssertTrue(changeset.wasReplaced)
 
 		// Test tracking of indexes across the changeset.
-		XCTAssert(changeset.afterIndexFor(0) == nil)
-		XCTAssert(changeset.afterIndexFor(1) == nil)
-		XCTAssert(changeset.afterIndexFor(2) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 0) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 1) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 2) == nil)
 	}
 
 	func testEmptyBeforeChangeset() {
@@ -243,7 +243,7 @@ class ChangesetTests: XCTestCase {
 			EquatableValue(name: "G", rev: 0), // 3
 		]
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
 		XCTAssertEqual(changeset.updated.count, 0)
 		XCTAssertEqual(changeset.deleted.count, 0)
@@ -251,8 +251,8 @@ class ChangesetTests: XCTestCase {
 
 		// Insert All
 		let insertedRange = changeset.inserted.first!
-		XCTAssertEqual(insertedRange.startIndex, 0)
-		XCTAssertEqual(insertedRange.endIndex, 4)
+		XCTAssertEqual(insertedRange.lowerBound, 0)
+		XCTAssertEqual(insertedRange.upperBound, 4)
 
 		// This was a full replacement
 		XCTAssertTrue(changeset.wasReplaced)
@@ -266,7 +266,7 @@ class ChangesetTests: XCTestCase {
 		]
 		let dest = [EquatableValue]()
 
-		let changeset = source.changesetTo(dest)
+		let changeset = source.changeset(to: dest)
 
 		XCTAssertEqual(changeset.updated.count, 0)
 		XCTAssertEqual(changeset.deleted.count, 1)
@@ -274,15 +274,15 @@ class ChangesetTests: XCTestCase {
 
 		// Delete All
 		let deletedRange = changeset.deleted.first!
-		XCTAssertEqual(deletedRange.startIndex, 0)
-		XCTAssertEqual(deletedRange.endIndex, 3)
+		XCTAssertEqual(deletedRange.lowerBound, 0)
+		XCTAssertEqual(deletedRange.upperBound, 3)
 
 		// This was a full replacement
 		XCTAssertTrue(changeset.wasReplaced)
 
 		// Test tracking of indexes across the changeset.
-		XCTAssert(changeset.afterIndexFor(0) == nil)
-		XCTAssert(changeset.afterIndexFor(1) == nil)
-		XCTAssert(changeset.afterIndexFor(2) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 0) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 1) == nil)
+		XCTAssert(changeset.afterIndexFor(beforeIndex: 2) == nil)
 	}
 }

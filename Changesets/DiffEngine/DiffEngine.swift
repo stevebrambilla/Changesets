@@ -10,27 +10,27 @@
 
 import Foundation
 
-internal final class DiffEngine<C: CollectionType, T where C.Index == Int, C.Generator.Element == T> {
-	private let sourceList: C
-	private let destList: C
-	private let isMatch: (T, T) -> Bool
+internal final class DiffEngine<C: Collection, T> where C.Index == Int, C.IndexDistance == Int, C.Iterator.Element == T {
+	fileprivate let sourceList: C
+	fileprivate let destList: C
+	fileprivate let isMatch: (T, T) -> Bool
 
-	private let precision: DiffPrecision
-	private var matchList = [DiffResultSpan]()
-	private var statusTable = [Int: DiffStatus]()
+	fileprivate let precision: DiffPrecision
+	fileprivate var matchList = [DiffResultSpan]()
+	fileprivate var statusTable = [Int: DiffStatus]()
 
-	internal init(sourceList: C, destList: C, precision: DiffPrecision = .FastImperfect, isMatch: (T, T) -> Bool) {
+	internal init(sourceList: C, destList: C, precision: DiffPrecision = .fastImperfect, isMatch: @escaping (T, T) -> Bool) {
 		self.sourceList = sourceList
 		self.destList = destList
 		self.isMatch = isMatch
 		self.precision = precision
 
-		let scount = sourceList.endIndex
-		let dcount = destList.endIndex
+		let scount = sourceList.count
+		let dcount = destList.count
 
 		if dcount > 0 && scount > 0 {
 			statusTable = [Int: DiffStatus](minimumCapacity: max(9, dcount / 10))
-			processRange(0, destEnd: dcount - 1, sourceStart: 0, sourceEnd: scount - 1)
+			processRange(destStart: 0, destEnd: dcount - 1, sourceStart: 0, sourceEnd: scount - 1)
 		}
 	}
 }
@@ -39,7 +39,7 @@ internal final class DiffEngine<C: CollectionType, T where C.Index == Int, C.Gen
 // MARK: Matching Algorithm
 
 extension DiffEngine {
-	private func findLongestSourceMatch(destIndex: Int, destEnd: Int, sourceStart: Int, sourceEnd: Int) -> DiffStatus {
+	fileprivate func findLongestSourceMatch(destIndex: Int, destEnd: Int, sourceStart: Int, sourceEnd: Int) -> DiffStatus {
 		let maxDestLength = destEnd - destIndex + 1
 		var curBestLength = 0
 		var curBestIndex = -1
@@ -66,13 +66,13 @@ extension DiffEngine {
 		}
 
 		if curBestIndex == -1 {
-			return .NoMatch
+			return .noMatch
 		} else {
-			return .Matched(start: curBestIndex, length: curBestLength)
+			return .matched(start: curBestIndex, length: curBestLength)
 		}
 	}
 
-	private func findSourceMatchLength(destIndex: Int, sourceIndex: Int, maxLength: Int) -> Int {
+	fileprivate func findSourceMatchLength(_ destIndex: Int, sourceIndex: Int, maxLength: Int) -> Int {
 		var matchCount = 0
 
 		while matchCount < maxLength {
@@ -85,10 +85,10 @@ extension DiffEngine {
 		return matchCount
 	}
 
-	private func processRange(destStart: Int, destEnd: Int, sourceStart: Int, sourceEnd: Int) {
+	fileprivate func processRange(destStart: Int, destEnd: Int, sourceStart: Int, sourceEnd: Int) {
 		var curBestIndex = -1
 		var curBestLength = -1
-		var bestItem = DiffStatus.Unknown
+		var bestItem = DiffStatus.unknown
 
 		var destIndex = destStart
 		while destIndex <= destEnd {
@@ -98,21 +98,21 @@ extension DiffEngine {
 				break
 			}
 
-			var curItem = statusTable[destIndex] ?? .Unknown
+			var curItem = statusTable[destIndex] ?? .unknown
 
 			// Revalidate the current item's range
-			curItem = curItem.validate(sourceStart, newEnd: sourceEnd, maxPossibleDestLength: maxPossibleDestLength)
+			curItem = curItem.validate(newStart: sourceStart, newEnd: sourceEnd, maxPossibleDestLength: maxPossibleDestLength)
 
-			if curItem == .Unknown {
+			if curItem == .unknown {
 				// Recalc new best length since it isn't valid or has never been done
-				curItem = findLongestSourceMatch(destIndex, destEnd: destEnd, sourceStart: sourceStart, sourceEnd: sourceEnd)
+				curItem = findLongestSourceMatch(destIndex: destIndex, destEnd: destEnd, sourceStart: sourceStart, sourceEnd: sourceEnd)
 			}
 
 			// Add the updated item back to the table
 			statusTable[destIndex] = curItem
 
 			switch curItem {
-			case let .Matched(_, length):
+			case let .matched(_, length):
 				if length > curBestLength {
 					// This is longest match so far
 					curBestIndex = destIndex
@@ -122,19 +122,19 @@ extension DiffEngine {
 
 				// Jump ahead depending on the desired precision.
 				switch precision {
-				case .FastImperfect: // Always jump over the match
+				case .fastImperfect: // Always jump over the match
 					destIndex += length - 1
 
-				case .Medium: // Only jump if a new best match was set
+				case .medium: // Only jump if a new best match was set
 					if curItem == bestItem {
 						destIndex += length - 1
 					}
 
-				case .SlowPerfect: // Never jump -- evaluate all indexes
+				case .slowPerfect: // Never jump -- evaluate all indexes
 					break
 				}
 
-			case .NoMatch, .Unknown:
+			case .noMatch, .unknown:
 				break
 			}
 
@@ -142,15 +142,15 @@ extension DiffEngine {
 		}
 
 		switch bestItem {
-		case let .Matched(sourceIndex, length):
+		case let .matched(sourceIndex, length):
 			// Add the best match to the matchList
-			matchList.append(.NoChange(sourceIndex: sourceIndex, destIndex: curBestIndex, length: length))
+			matchList.append(.noChange(sourceIndex: sourceIndex, destIndex: curBestIndex, length: length))
 
 			if destStart < curBestIndex {
 				// Still have more lower destination data
 				if sourceStart < sourceIndex {
 					// Still have more lower source data -- recursive call to process lower indexes
-					processRange(destStart, destEnd: curBestIndex - 1, sourceStart: sourceStart, sourceEnd: sourceIndex - 1)
+					processRange(destStart: destStart, destEnd: curBestIndex - 1, sourceStart: sourceStart, sourceEnd: sourceIndex - 1)
 				}
 			}
 
@@ -160,11 +160,11 @@ extension DiffEngine {
 				// We still have more upper dest data
 				if sourceEnd >= upperSourceStart {
 					// Still have more upper source data -- recursive call to process upper indexes
-					processRange(upperDestStart, destEnd: destEnd, sourceStart: upperSourceStart, sourceEnd: sourceEnd)
+					processRange(destStart: upperDestStart, destEnd: destEnd, sourceStart: upperSourceStart, sourceEnd: sourceEnd)
 				}
 			}
 
-		case .NoMatch, .Unknown:
+		case .noMatch, .unknown:
 			// We are done - there are no matches in this span
 			break
 		}
@@ -175,7 +175,7 @@ extension DiffEngine {
 // MARK: Report
 
 extension DiffEngine {
-	private func findIntermediateChanges(curDest: Int, nextDest: Int, curSource: Int, nextSource: Int) -> [DiffResultSpan] {
+	fileprivate func findIntermediateChanges(curDest: Int, nextDest: Int, curSource: Int, nextSource: Int) -> [DiffResultSpan] {
 		var curDest = curDest
 		var curSource = curSource
 
@@ -186,23 +186,23 @@ extension DiffEngine {
 		if diffDest > 0 {
 			if diffSource > 0 {
 				let minDiff = min(diffDest, diffSource)
-				changes.append(.Replace(sourceIndex: curSource, destIndex: curDest, length: minDiff))
+				changes.append(.replace(sourceIndex: curSource, destIndex: curDest, length: minDiff))
 
 				if diffDest > diffSource {
 					curDest += minDiff
-					changes.append(.Add(destIndex: curDest, length: diffDest - diffSource))
+					changes.append(.add(destIndex: curDest, length: diffDest - diffSource))
 				} else {
 					if diffSource > diffDest {
 						curSource += minDiff
-						changes.append(.Delete(sourceIndex: curSource, length: diffSource - diffDest))
+						changes.append(.delete(sourceIndex: curSource, length: diffSource - diffDest))
 					}
 				}
 			} else {
-				changes.append(.Add(destIndex: curDest, length: diffDest))
+				changes.append(.add(destIndex: curDest, length: diffDest))
 			}
 		} else {
 			if diffSource > 0 {
-				changes.append(.Delete(sourceIndex: curSource, length: diffSource))
+				changes.append(.delete(sourceIndex: curSource, length: diffSource))
 			}
 		}
 
@@ -217,17 +217,17 @@ extension DiffEngine {
 		// Deal with the special case of empty files
 		if dcount == 0 {
 			if scount > 0 {
-				report.append(.Delete(sourceIndex: 0, length: scount))
+				report.append(.delete(sourceIndex: 0, length: scount))
 			}
 			return report
 		} else {
 			if scount == 0 {
-				report.append(.Add(destIndex: 0, length: dcount))
+				report.append(.add(destIndex: 0, length: dcount))
 				return report
 			}
 		}
 
-		matchList.sortInPlace(isOrderedBeforeByDestIndex)
+		matchList.sort(by: isOrderedBeforeByDestIndex)
 		var curDest = 0
 		var curSource = 0
 		var maybeLast: DiffResultSpan? = nil
@@ -237,10 +237,10 @@ extension DiffEngine {
 			let nextDest = span.destIndex ?? 0
 			let nextSource = span.sourceIndex ?? 0
 
-			let changes = findIntermediateChanges(curDest, nextDest: nextDest, curSource: curSource, nextSource: nextSource)
+			let changes = findIntermediateChanges(curDest: curDest, nextDest: nextDest, curSource: curSource, nextSource: nextSource)
 			report += changes
 
-			if let last = maybeLast where changes.isEmpty {
+			if let last = maybeLast, changes.isEmpty {
 				maybeLast = last.addLength(length: span.length)
 			} else {
 				report.append(span)
@@ -252,7 +252,7 @@ extension DiffEngine {
 		}
 
 		// Process any tail end data
-		report += findIntermediateChanges(curDest, nextDest: dcount, curSource: curSource, nextSource: scount)
+		report += findIntermediateChanges(curDest: curDest, nextDest: dcount, curSource: curSource, nextSource: scount)
 		
 		return report
 	}

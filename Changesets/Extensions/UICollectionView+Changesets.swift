@@ -22,16 +22,16 @@ extension UICollectionView {
 	/// When the entire collection is replaced, it can optionally reload the
 	/// data rather than animating deletes and inserts depending on the value of
 	/// `reloadForReplacements`.
-	public func applyChangeset(changeset: Changeset, reloadForReplacements: Bool = true, completion: (Bool -> Void)? = nil) {
+	public func applyChangeset(changeset: Changeset, reloadForReplacements: Bool = true, completion: ((Bool) -> Void)? = nil) {
 		if changeset.wasReplaced && reloadForReplacements {
 			reloadData()
 			return
 		}
 
 		performBatchUpdates({
-			self.reloadItemsAtIndexPaths(changeset.updatedIndexPaths(0))
-			self.deleteItemsAtIndexPaths(changeset.deletedIndexPaths(0))
-			self.insertItemsAtIndexPaths(changeset.insertedIndexPaths(0))
+			self.reloadItems(at: changeset.updatedIndexPaths(section: 0))
+			self.deleteItems(at: changeset.deletedIndexPaths(section: 0))
+			self.insertItems(at: changeset.insertedIndexPaths(section: 0))
 		}, completion: completion)
 	}
 
@@ -57,9 +57,9 @@ extension UICollectionView {
 	/// Calls the item updating methods corresponding to the changeset, in
 	/// the following order:
 	///
-	/// - reloadItemsAtIndexPaths(indexPaths:)
-	/// - deleteItemsAtIndexPaths(indexPaths:)
-	/// - insertItemsAtIndexPaths(indexPaths:)
+	/// - reloadItems(at:)
+	/// - deleteItems(at:)
+	/// - insertItems(at:)
 	///
 	/// This method does not perform any batching. Batching is left to the
 	/// caller so that calls to updateSections(changeset:) and
@@ -74,9 +74,9 @@ extension UICollectionView {
 	///   view’s state _before_ the changeset.
 	/// - parameter toSection: the section index relative to the collection
 	///   view’s state _after_ the changeset.
-	public func updateItems(changeset: Changeset, fromSection: Int, toSection: Int) {
-		reloadItemsAtIndexPaths(changeset.updatedIndexPaths(fromSection))
-		deleteItemsAtIndexPaths(changeset.deletedIndexPaths(fromSection))
-		insertItemsAtIndexPaths(changeset.insertedIndexPaths(toSection))
+	public func updateItems(_ changeset: Changeset, fromSection: Int, toSection: Int) {
+		reloadItems(at: changeset.updatedIndexPaths(section: fromSection))
+		deleteItems(at: changeset.deletedIndexPaths(section: fromSection))
+		insertItems(at: changeset.insertedIndexPaths(section: toSection))
 	}
 }

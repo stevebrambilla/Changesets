@@ -19,13 +19,13 @@ import Foundation
 /// inequal values) and elements that have otherwise been inserted / deleted
 /// (different identities).
 public protocol Matchable: Equatable {
-	func match(other: Self) -> MatchResult
+	func match(_ other: Self) -> MatchResult
 }
 
 // Any types that implement Matchable's `matchWith()` method get Equatable for
 // free.
 public func == <T: Matchable>(lhs: T, rhs: T) -> Bool {
-	return lhs.match(rhs) == .SameIdentityEqualValue
+	return lhs.match(rhs) == .sameIdentityEqualValue
 }
 
 // ----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ public func == <T: Matchable>(lhs: T, rhs: T) -> Bool {
 public enum MatchResult {
 	/// The matched instances have the same identity and same value. This same
 	/// comparison would result in true if compared for value equality.
-	case SameIdentityEqualValue
+	case sameIdentityEqualValue
 
 	/// The matched instances have the same identity, but different content.
 	/// This same comparison would result in false if compared for value 
@@ -43,18 +43,18 @@ public enum MatchResult {
 	///
 	/// This would be the case if a more recent value was compared against an
 	/// older value, yet the two values represent the same identity.
-	case SameIdentityInequalValue
+	case sameIdentityInequalValue
 
 	/// The matched instances do not have the same identity or value. This same
 	/// comparison would result in false if compared for value equality.
-	case DifferentIdentity
+	case differentIdentity
 }
 
 extension MatchResult {
 	/// Returns a MatchResult given two equatable values that are known to have
 	/// the same identity.
-	public static func sameIdentityCompare<T: Equatable>(lhs: T, _ rhs: T) -> MatchResult {
-		return lhs == rhs ? .SameIdentityEqualValue : .SameIdentityInequalValue
+	public static func sameIdentityCompare<T: Equatable>(_ lhs: T, _ rhs: T) -> MatchResult {
+		return lhs == rhs ? .sameIdentityEqualValue : .sameIdentityInequalValue
 	}
 
 	/// Returns a MatchResult given two equatable values that do not have an
@@ -62,17 +62,17 @@ extension MatchResult {
 	///
 	/// This is low-fidelity matching that is useful for comparing simple types
 	/// that don't necessarily have an identity (like Swift's types).
-	public static func noIdentityCompare<T: Equatable>(lhs: T, _ rhs: T) -> MatchResult {
-		return lhs == rhs ? .SameIdentityEqualValue : .DifferentIdentity
+	public static func noIdentityCompare<T: Equatable>(_ lhs: T, _ rhs: T) -> MatchResult {
+		return lhs == rhs ? .sameIdentityEqualValue : .differentIdentity
 	}
 }
 
 /// If `result` is not `EqualIdentityEqualValue`, return it, otherwise evaluate
 /// `rhs` as a value equation and return `EqualIdentityEqualValue` or
 /// `EqualIdentityInequalValue` depending on the result.
-public func && (result: MatchResult, @autoclosure rhs: () -> Bool) -> MatchResult {
-	if result == .SameIdentityEqualValue {
-		return rhs() ? .SameIdentityEqualValue : .SameIdentityInequalValue
+public func && (result: MatchResult, rhs: @autoclosure () -> Bool) -> MatchResult {
+	if result == .sameIdentityEqualValue {
+		return rhs() ? .sameIdentityEqualValue : .sameIdentityInequalValue
 	}
 	return result
 }
@@ -81,31 +81,31 @@ public func && (result: MatchResult, @autoclosure rhs: () -> Bool) -> MatchResul
 // MARK: - Swift Types
 
 extension String: Matchable {
-	public func match(other: String) -> MatchResult {
+	public func match(_ other: String) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Int: Matchable {
-	public func match(other: Int) -> MatchResult {
+	public func match(_ other: Int) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Double: Matchable {
-	public func match(other: Double) -> MatchResult {
+	public func match(_ other: Double) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Float: Matchable {
-	public func match(other: Float) -> MatchResult {
+	public func match(_ other: Float) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
 
 extension Bool: Matchable {
-	public func match(other: Bool) -> MatchResult {
+	public func match(_ other: Bool) -> MatchResult {
 		return MatchResult.noIdentityCompare(self, other)
 	}
 }
