@@ -78,7 +78,7 @@ extension UITableView {
 	/// all change kinds. When the entire collection is replaced, it can
 	/// optionally reload the data rather than animating inserts and deletes 
 	/// depending on the policy.
-	public func applyChangeset(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
+	public func performUpdates(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
 		if changeset.wasReplaced && policy.reloadForReplacements {
 			reloadData()
 			return
@@ -107,7 +107,7 @@ extension UITableView {
 	/// - parameter changeset: the set of section changes to pass through to the
 	///   table view.
 	/// - parameter policy: optionally override the default animation policy.
-	public func updateSections(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
+	public func applySectionUpdates(changeset: Changeset, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
 		policy.applySectionUpdates(tableView: self, sections: changeset.updatedIndexSet)
 		policy.applySectionDeletions(tableView: self, sections: changeset.deletedIndexSet)
 		policy.applySectionInsertions(tableView: self, sections: changeset.insertedIndexSet)
@@ -133,7 +133,7 @@ extension UITableView {
 	///   state _before_ the changeset.
 	/// - parameter toSection: the section index relative to the table view's
 	///   state _after_ the changeset.
-	public func updateRows(changeset: Changeset, fromSection: Int, toSection: Int, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
+	public func applyRowUpdates(changeset: Changeset, fromSection: Int, toSection: Int, animationPolicy policy: TableViewChangesetPolicy = TableViewChangesetPolicy.defaultPolicy) {
 		policy.applyRowUpdates(tableView: self, indexPaths: changeset.updatedIndexPaths(section: fromSection))
 		policy.applyRowDeletions(tableView: self, indexPaths: changeset.deletedIndexPaths(section: fromSection))
 		policy.applyRowInsertions(tableView: self, indexPaths: changeset.insertedIndexPaths(section: toSection))

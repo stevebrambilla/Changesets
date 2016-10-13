@@ -67,9 +67,9 @@ extension MatchResult {
 	}
 }
 
-/// If `result` is not `EqualIdentityEqualValue`, return it, otherwise evaluate
-/// `rhs` as a value equation and return `EqualIdentityEqualValue` or
-/// `EqualIdentityInequalValue` depending on the result.
+/// If `result` is not `equalIdentityEqualValue`, return it, otherwise evaluate
+/// `rhs` as a value equation and return `equalIdentityEqualValue` or
+/// `equalIdentityInequalValue` depending on the result.
 public func && (result: MatchResult, rhs: @autoclosure () -> Bool) -> MatchResult {
 	if result == .sameIdentityEqualValue {
 		return rhs() ? .sameIdentityEqualValue : .sameIdentityInequalValue

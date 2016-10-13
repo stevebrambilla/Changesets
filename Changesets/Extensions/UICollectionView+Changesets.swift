@@ -22,7 +22,7 @@ extension UICollectionView {
 	/// When the entire collection is replaced, it can optionally reload the
 	/// data rather than animating deletes and inserts depending on the value of
 	/// `reloadForReplacements`.
-	public func applyChangeset(changeset: Changeset, reloadForReplacements: Bool = true, completion: ((Bool) -> Void)? = nil) {
+	public func performUpdates(changeset: Changeset, reloadForReplacements: Bool = true, completion: ((Bool) -> Void)? = nil) {
 		if changeset.wasReplaced && reloadForReplacements {
 			reloadData()
 			return
@@ -48,7 +48,7 @@ extension UICollectionView {
 	///
 	/// - parameter changeset: the set of section changes to pass through to the
 	///   collection view.
-	public func updateSections(changeset: Changeset) {
+	public func applySectionUpdates(changeset: Changeset) {
 		reloadSections(changeset.updatedIndexSet)
 		deleteSections(changeset.deletedIndexSet)
 		insertSections(changeset.insertedIndexSet)
@@ -74,7 +74,7 @@ extension UICollectionView {
 	///   view’s state _before_ the changeset.
 	/// - parameter toSection: the section index relative to the collection
 	///   view’s state _after_ the changeset.
-	public func updateItems(_ changeset: Changeset, fromSection: Int, toSection: Int) {
+	public func applyItemUpdates(changeset: Changeset, fromSection: Int, toSection: Int) {
 		reloadItems(at: changeset.updatedIndexPaths(section: fromSection))
 		deleteItems(at: changeset.deletedIndexPaths(section: fromSection))
 		insertItems(at: changeset.insertedIndexPaths(section: toSection))

@@ -157,7 +157,7 @@ extension Changeset {
 		for span in report {
 			switch span {
 			case let .noChange(sourceIndex, destIndex, length):
-				// The 'NoChange' case only considers identity differences. Do
+				// The '.noChange' case only considers identity differences. Do
 				// another pass over these ranges to compare their values in order
 				// to differentiate between unchanged instances and updated 
 				// instances.
@@ -198,7 +198,7 @@ extension Changeset {
 				}
 
 			case let .replace(sourceIndex, destIndex, length):
-				// 'Replace' spans are analagous to a delete and an insert.
+				// '.replace' spans are analagous to a delete and an insert.
 				let deleteRange = (sourceIndex ..< sourceIndex+length)
 				deleted.append(deleteRange)
 
@@ -206,12 +206,12 @@ extension Changeset {
 				inserted.append(addRange)
 
 			case let .delete(sourceIndex, length):
-				// Map `Delete` spans directly to deleted ranges.
+				// Map `.delete` spans directly to deleted ranges.
 				let range = (sourceIndex ..< sourceIndex+length)
 				deleted.append(range)
 
 			case let .add(destIndex, length):
-				// Map `Add` spans directly to inserted ranges.
+				// Map `.add` spans directly to inserted ranges.
 				let range = (destIndex ..< destIndex+length)
 				inserted.append(range)
 			}
@@ -219,13 +219,10 @@ extension Changeset {
 
 		// Clean up the ranges by consolidating consecutive ranges together, then 
 		// determine if the changeset was a full replacement.
-		let consolidatedUpdates = consolidate(ranges: updated)
-		let consolidatedDeletes = consolidate(ranges: deleted)
-		let consolidatedInserts = consolidate(ranges: inserted)
 		return Changeset(
-			updated: consolidatedUpdates,
-			deleted: consolidatedDeletes,
-			inserted: consolidatedInserts,
+			updated: consolidate(ranges: updated),
+			deleted: consolidate(ranges: deleted),
+			inserted: consolidate(ranges: inserted),
 			countBefore: before.count,
 			countAfter: after.count
 		)
