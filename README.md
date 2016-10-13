@@ -22,13 +22,13 @@ This is just like the delegate callbacks that a `NSFetchedResultsController`woul
 
 For example: to transition an array from its original state:
 
-|---------------|---------------|---------------|---------------|---------------|---------------|
 | A<sub>0</sub> | B<sub>0</sub> | C<sub>0</sub> | D<sub>0</sub> | H<sub>0</sub> | I<sub>0</sub> |
+|---------------|---------------|---------------|---------------|---------------|---------------|
 
 to its new state:
 
-|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
 | B<sub>0</sub> | C<sub>0</sub> | D<sub>1</sub> | F<sub>0</sub> | H<sub>0</sub> | I<sub>1</sub> | K<sub>0</sub> |
+|---------------|---------------|---------------|---------------|---------------|---------------|---------------|
 
 The changeset would report the following changes to perform the transition:
 
