@@ -82,30 +82,30 @@ public func && (result: MatchResult, rhs: @autoclosure () -> Bool) -> MatchResul
 
 extension String: Matchable {
 	public func match(_ other: String) -> MatchResult {
-		return MatchResult.noIdentityCompare(self, other)
+		return .noIdentityCompare(self, other)
 	}
 }
 
 extension Int: Matchable {
 	public func match(_ other: Int) -> MatchResult {
-		return MatchResult.noIdentityCompare(self, other)
+		return .noIdentityCompare(self, other)
 	}
 }
 
 extension Double: Matchable {
 	public func match(_ other: Double) -> MatchResult {
-		return MatchResult.noIdentityCompare(self, other)
+		return .noIdentityCompare(self, other)
 	}
 }
 
 extension Float: Matchable {
 	public func match(_ other: Float) -> MatchResult {
-		return MatchResult.noIdentityCompare(self, other)
+		return .noIdentityCompare(self, other)
 	}
 }
 
 extension Bool: Matchable {
 	public func match(_ other: Bool) -> MatchResult {
-		return MatchResult.noIdentityCompare(self, other)
+		return .noIdentityCompare(self, other)
 	}
 }

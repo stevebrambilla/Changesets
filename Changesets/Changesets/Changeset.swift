@@ -65,10 +65,10 @@ extension Changeset {
 		return changedIndexesCount == 0
 	}
 
-	// Returns true if the before and after collections were fully replaced.
+	/// Returns true if the before and after collections were fully replaced.
 	public var wasReplaced: Bool {
 		// If everything in the `before` collection is deleted or everything in
-		// the after collection is inserted, then it's considered a full 
+		// the `after` collection is inserted, then it's considered a full
 		// replacement.
 		let fullDeletedRange = (0 ..< countBefore)
 		if let deletedRange = deleted.first, deletedRange == fullDeletedRange {
@@ -81,6 +81,11 @@ extension Changeset {
 		}
 
 		return false
+	}
+
+	/// Returns the Changeset with all `updated` indexes removed.
+	public func updatesStripped() -> Changeset {
+		return Changeset(updated: [], deleted: deleted, inserted: inserted, countBefore: countBefore, countAfter: countAfter)
 	}
 
 	/// Applies the changeset's modifications to the `beforeIndex` and returns
