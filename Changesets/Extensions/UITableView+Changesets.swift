@@ -16,14 +16,14 @@ import UIKit
 ///
 /// A custom row animation can be specified for each change kind.
 public struct TableViewChangesetPolicy {
-	public let insertAnimation: UITableViewRowAnimation
-	public let deleteAnimation: UITableViewRowAnimation
-	public let updateAnimation: UITableViewRowAnimation
+	public let insertAnimation: UITableView.RowAnimation
+	public let deleteAnimation: UITableView.RowAnimation
+	public let updateAnimation: UITableView.RowAnimation
 	public let reloadForReplacements: Bool
 
 	/// Initializes a new policy with customizable table view row animations for
 	/// 'insert', 'delete', and 'update' changes.
-	public init(insertAnimation: UITableViewRowAnimation, deleteAnimation: UITableViewRowAnimation, updateAnimation: UITableViewRowAnimation, reloadForReplacements: Bool) {
+	public init(insertAnimation: UITableView.RowAnimation, deleteAnimation: UITableView.RowAnimation, updateAnimation: UITableView.RowAnimation, reloadForReplacements: Bool) {
 		self.insertAnimation = insertAnimation
 		self.deleteAnimation = deleteAnimation
 		self.updateAnimation = updateAnimation

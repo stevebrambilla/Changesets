@@ -123,7 +123,7 @@ extension Changeset {
 // ----------------------------------------------------------------------------
 // MARK: - CollectionType Extensions
 
-extension Collection where Iterator.Element: Matchable, Index == Int, IndexDistance == Int {
+extension Collection where Iterator.Element: Matchable, Index == Int {
 	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides high-fidelity matching using Matchable's `matchWith()` method.
@@ -134,7 +134,7 @@ extension Collection where Iterator.Element: Matchable, Index == Int, IndexDista
 	}
 }
 
-extension Collection where Iterator.Element: Equatable, Index == Int, IndexDistance == Int {
+extension Collection where Iterator.Element: Equatable, Index == Int {
 	/// Calculate the Changeset required to transition from `self` to `after`.
 	///
 	/// Provides low-fidelity matching by matching using value equality.
@@ -149,7 +149,7 @@ extension Collection where Iterator.Element: Equatable, Index == Int, IndexDista
 // MARK: - Calculating Changesets
 
 extension Changeset {
-	fileprivate static func calculateChangeset<T, C: Collection>(from before: C, to after: C, match: @escaping (T, T) -> MatchResult) -> Changeset where T == C.Iterator.Element, C.Index == Int, C.IndexDistance == Int {
+	fileprivate static func calculateChangeset<T, C: Collection>(from before: C, to after: C, match: @escaping (T, T) -> MatchResult) -> Changeset where T == C.Iterator.Element, C.Index == Int {
 		// Calculate the diff between the two collections by comparing identity.
 		let report = after.diff(against: before) { left, right in
 			match(left, right) != .differentIdentity

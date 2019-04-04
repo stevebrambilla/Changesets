@@ -10,7 +10,7 @@
 
 import Foundation
 
-internal final class DiffEngine<C: Collection, T> where C.Index == Int, C.IndexDistance == Int, C.Iterator.Element == T {
+internal final class DiffEngine<C: Collection, T> where C.Index == Int, C.Iterator.Element == T {
 	fileprivate let sourceList: C
 	fileprivate let destList: C
 	fileprivate let isMatch: (T, T) -> Bool

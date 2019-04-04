@@ -18,7 +18,7 @@ internal enum DiffPrecision {
 	case slowPerfect
 }
 
-extension Collection where Iterator.Element: Equatable, Index == Int, IndexDistance == Int {
+extension Collection where Iterator.Element: Equatable, Index == Int {
 	/// Calculates the diff between two collections using the equality operator 
 	/// for matching.
 	///
@@ -29,7 +29,7 @@ extension Collection where Iterator.Element: Equatable, Index == Int, IndexDista
 	}
 }
 
-extension Collection where Index == Int, IndexDistance == Int {
+extension Collection where Index == Int {
 	/// Calculates the diff between two collections using the `isMatch` closure
 	/// for matching.
 	///
