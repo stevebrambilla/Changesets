@@ -25,6 +25,7 @@ extension UICollectionView {
 	public func performUpdates(changeset: Changeset, reloadForReplacements: Bool = true, completion: ((Bool) -> Void)? = nil) {
 		if changeset.wasReplaced && reloadForReplacements {
 			reloadData()
+            completion?(true)
 			return
 		}
 

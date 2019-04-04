@@ -8,7 +8,7 @@ set -e
 PROJECT_DISPLAY_NAME="Changesets"
 XCODE_PROJECT="Changesets.xcodeproj"
 XCODE_SCHEME="Changesets-iOS"
-XCODE_DESTINATION="platform=iOS Simulator,name=iPhone 6s,OS=10.0"
+XCODE_DESTINATION="platform=iOS Simulator,name=iPhone X,OS=12.2"
 XCODE_SDK="iphonesimulator"
 
 main () {
